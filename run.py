@@ -18,8 +18,7 @@ def load_from_record(record):
 """
 class Action(object):
     """docstring for Action"""
-
-    def __init__(self, config, args):
+    def __init__(self, args, config=None):
         self.config = config
         self.args = args
 
@@ -27,64 +26,54 @@ class Action(object):
         self.X, self.y = self.load_data()
         self.X_new, self.y_new = None, None
 
-        getattr(self, config["action"])()
+        self._X_new_set = False
+        self._y_new_set = False
+
+        if self.config:
+            getattr(self, config["action"])()
+        else:
+            getattr(self, args.action)()
 
         self.save()
 
     def fit(self):
-
         self.model.fit(self.X, self.y)
 
-        for output in self.config["outputs"]:
-            if output["type"] == "model":
-                self.save_model(self.model)
-
-    def transform(self):
-        
-        X_new, y_new = self.model.transform(self.X, self.y)
-
-        for output in self.config["outputs"]:
-            if output["type"] == "data":
-                self.save_data(X_new, y_new)
-
-    def predict(self):
-        pass
+    def transform(self):        
+        self.X_new = self.model.transform(self.X, self.y)
+        self._X_new_set = True
 
     def fit_transform(self):
-        pass
+        self.fit()
+        self.transform()
+
+    def predict(self):
+        self.y_new = self.model.predict(self.X)
+        self._y_new_set = True
 
     def save(self):
-        if self.config["outputs"] not None:
+        if self.config["outputs"] != None:
 
-            time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
             path = "archive/"+time+"/"
-            os.mkdir("archive/"+time)
+            os.mkdir(path)
 
             for output in self.config["outputs"]:
 
                 if output["type"] == "data":
-                    if self.X_new:
+                    if self._X_new_set:
+                        np.save(path+"X_new.npy", self.X_new)
+                    if self._y_new_set:
+                        np.save(path+"y_new.npy", self.y_new)
 
-
-
-    def save_model(self, model):
-        time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        os.mkdir("archive/"+time)
-        name = self.config["class"].__name__
-        path = "archive/"+time+"/"+name+".pkl"
-        joblib.dump(model, path)
-
-    def save_data(self, X=None, y=None):
-        time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        os.mkdir("archive/"+time)
-        name = self.config["class"].__name__
-        path = "archive/"+time+"/"+name+".pkl"
-        joblib.dump(model, path)
+                if output["type"] == "model":
+                    name = self.config["class"].__name__
+                    joblib.dump(self.model, path+name+".pkl")
 
     def load_data(self):
         X = np.load(self.args.X)
 
-        if self.args.y:
+        if self.args.y != None:
             y = np.load(self.args.y)
         else:
             y = None
@@ -92,38 +81,27 @@ class Action(object):
         return X, y
 
     def load_model(self):
-        return self.config["class"](**self.config["params"])
+
+        if self.args.model:
+            return joblib.load(self.args.model)
+        elif self.config["class"]:
+            return self.config["class"](**self.config["params"])
+        else:
+            raise RuntimeError("Model was not be specified.")
 
 if __name__ == '__main__':
 
     arg_parser = argparse.ArgumentParser(description="Scikit runner.")
-    arg_parser.add_argument("configfile", help="Path to config file")
+    arg_parser.add_argument("-c", "--config", help="Path to config file")
     arg_parser.add_argument("-X", help="Input data", default=None)
     arg_parser.add_argument("-y", help="Input labels", default=None)
+    arg_parser.add_argument("-m", "--model", help="Fitted model", default=None)
+    arg_parser.add_argument("-a", "--action", help="Action to perform")
     args = arg_parser.parse_args()
 
-    config_parser = configparse.ConfigParser()
-    config = config_parser.parse_config(args.configfile)
-
-    Action(config, args)
-
-    #getattr(Action, config["action"])(config, args)
-
-    """
-    model = config["class"](**config["params"])
-    action = getattr(model, config["action"])
-
-    X = np.load(args.X)#load_from_record(args.X)
-    X_new = action(X)
-
-    time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    os.mkdir("archive/"+time)
-    for output in config["outputs"]:
-        if output["type"] == "data":
-            path = "archive/"+time+"/"+"X.npy"
-            np.save(path, X_new)
-        elif output["type"] == "model":
-            name = config["class"].__name__
-            path = "archive/"+time+"/"+name+".pkl"
-            joblib.dump(model, path)
-    """
+    if args.config:
+        config_parser = configparse.ConfigParser()
+        config = config_parser.parse_config(args.config)
+        Action(args, config)
+    else:
+        Action(args)

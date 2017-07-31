@@ -1,6 +1,6 @@
 module: "models.transformer"
 class: "RandomSelection"
-action: "fit"
+action: "fit_transform"
 params:
   n_components: 100
   random_state: 37
