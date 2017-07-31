@@ -1,0 +1,14 @@
+module: "models.transformer"
+class: "RandomSelection"
+action: "fit"
+params:
+  n_components: 100
+  random_state: 37
+outputs:
+  - type: "model"
+  - type: "data"
+
+
+
+      #plot: "no"
+      #submit: "no"

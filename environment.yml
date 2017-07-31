@@ -1,12 +1,11 @@
 dependencies:
   - python=3.5.3
   - numpy=1.13.0
-  - pip=9.0.1
   - scikit-learn=0.18.2
   - scipy=0.19.1
   - gitpython
-  - requests
+  - pip=9.0.1
   - pip:
     - sumatra
     - pyyaml==3.12
-    - nibabel
+    - kaggle-cli
