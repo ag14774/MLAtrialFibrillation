@@ -1,0 +1,15 @@
+module: "sklearn.linear_model"
+class: "LinearRegression"
+action: "fit"
+params:
+  normalize: True
+  #n_components: 1000
+  #random_state: 37
+#outputs:
+#  - type: "model"
+#  - type: "data"
+
+
+
+      #plot: "no"
+      #submit: "no"
