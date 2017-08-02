@@ -3,9 +3,10 @@ dependencies:
   - numpy=1.13.0
   - scikit-learn=0.18.2
   - scipy=0.19.1
+  - pandas=0.20.3
   - gitpython
   - pip=9.0.1
   - pip:
-    - sumatra
+    - git+https://github.com/open-research/sumatra.git
     - pyyaml==3.12
     - kaggle-cli

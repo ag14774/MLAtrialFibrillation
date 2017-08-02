@@ -71,19 +71,10 @@ class RandomSelection(skl.base.BaseEstimator, skl.base.TransformerMixin):
         """
         return X_new
 
+
 class MyPipeline(Pipeline):
     """docstring for MyPipeline"""
     def __init__(self, arg):
         super(MyPipeline, self).__init__()
         self.arg = arg
         
-
-def submit_csv(csv, message):
-    subprocess.run(["kg", "submit", csv, "-m", message])
-
-def submit_archived(timestamp):
-    pass
-
-
-if __name__=="__main__":
-    make_submission("data/sampleSubmission_1.csv", "hallo!")

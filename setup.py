@@ -9,5 +9,5 @@ else:
 action(["conda", "env", "create", "-n", "ml-project", "-f", "environment.yml"])
 #action(["mkdir", "/tmp/smt"])
 action(["bash", "-c", "source activate ml-project && "
-        "smt init -d /tmp/smt -A archive -e python -m run.py "
+        "smt init -d ./archive -i ./archive -e python -m run.py "
         "-c store-diff ml-project"])
