@@ -3,4 +3,5 @@
 *.npy
 __pycache__/
 .kaggle-cli/
-archive/
+data/
+.smt/

@@ -24,4 +24,4 @@ Running an experiment
 Make sure the environment is activated:
 
 .. code-block:: shell
-    source activate ml-project
+    source activate ml_project

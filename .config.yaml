@@ -1,7 +1,7 @@
 #Examples of config settings
 
 #Example 1
-module: "models.transformer"
+module: "ml_project.models.transformer"
 class: "RandomSelection"
 action: "fit_transform"
 params:

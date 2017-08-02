@@ -1,6 +1,6 @@
+"""Scikit runner"""
 import numpy as np
 import argparse
-import configparse
 import os
 import datetime
 import pandas as pd
@@ -8,26 +8,30 @@ import pandas as pd
 from sklearn.externals import joblib
 from abc import ABC
 from abc import abstractmethod
-
+from ml_project import configparse
 
 class Action(ABC):
-    """docstring for Action"""
+    """Abstract Action class
+    
+    Args:
+        args (Namespace): Parsed arguments
+    """
     def __init__(self, args): 
         self.args = args     
-        self.X, self.y = self.load_data()
+        self.X, self.y = self._load_data()
         self.X_new, self.y_new = None, None
         self._X_new_set, self._y_new_set = False, False
-        self.save_path = self.mk_save_folder()
+        self.save_path = self._mk_save_folder()
 
     @abstractmethod
-    def save(self):
+    def _save(self):
         pass
 
     @abstractmethod
-    def load_model(self):
+    def _load_model(self):
         pass
 
-    def load_data(self):
+    def _load_data(self):
         X = np.load(self.args.X)
         if self.args.y != None:
             y = np.loadtxt(self.args.y)
@@ -35,39 +39,41 @@ class Action(ABC):
             y = None
         return X, y
 
-    def mk_save_folder(self):
-        basename = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        if args.name:
-            name = basename+"-"+args.name
-        else:
-            name = basename
-        path = "data/"+name+"/"
-        os.mkdir(path)
+    def _mk_save_folder(self):
+        #basename = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        basename = self.args.smt_label
+        path = "data/"+basename+"/"
         return path
 
 
 class ConfigAction(Action):
-    """docstring for ConfigAction"""
+    """Class to handle config file actions
+
+    Args:
+        args (Namespace): Parsed arguments
+        config (dict): Parsed config file
+
+    """
     def __init__(self, args, config):
         super(ConfigAction, self).__init__(args)
-        self.check_config(config)
+        self._check_config(config)
         self.config = config
-        self.model = self.load_model()       
+        self.model = self._load_model()       
         getattr(self, config["action"])()
-        self.save()
+        self._save()
 
     def fit(self):
         self.model.fit(self.X, self.y)
 
-    def _transform(self):        
+    def transform(self):        
         self.X_new = self.model.transform(self.X, self.y)
         self._X_new_set = True
 
     def fit_transform(self):
         self.fit()
-        self._transform()
+        self.transform()
 
-    def save(self):
+    def _save(self):
         name = self.config["class"].__name__
         joblib.dump(self.model, self.save_path+name+".pkl")
        
@@ -75,10 +81,10 @@ class ConfigAction(Action):
             path = self.save_path+"X_new.npy"
             np.save(path, self.X_new)
 
-    def load_model(self):
+    def _load_model(self):
         return self.config["class"](**self.config["params"])
 
-    def check_config(self, config):
+    def _check_config(self, config):
         if config["action"] not in ["fit", "fit_transform"]:
             raise Error("Can only run fit or fit_transform from config, got {}."
                         .format(config["action"]))
@@ -87,12 +93,16 @@ class ConfigAction(Action):
             raise Error("Model class not specified in config file.")
 
 class ModelAction(Action):
-    """docstring for ModelAction"""
+    """Class to model actions
+
+    Args:
+        args (Namespace): Parsed arguments
+    """
     def __init__(self, args):
         super(ModelAction, self).__init__(args)
-        self.model = self.load_model()       
+        self.model = self._load_model()       
         getattr(self, args.action)()
-        self.save()
+        self._save()
 
     def transform(self):        
         self.X_new = self.model.transform(self.X, self.y)
@@ -102,7 +112,7 @@ class ModelAction(Action):
         self.y_new = self.model.predict(self.X)
         self._y_new_set = True
 
-    def save(self):
+    def _save(self):
         if self._X_new_set:
             np.save(self.save_path+"X_new.npy", self.X_new) 
         if self._y_new_set:
@@ -111,7 +121,7 @@ class ModelAction(Action):
             df.index.name = "ID"
             df.to_csv(self.save_path+"y_new.csv")
 
-    def load_model(self):
+    def _load_model(self):
         return joblib.load(self.args.model)
 
 if __name__ == '__main__':
@@ -123,11 +133,13 @@ if __name__ == '__main__':
     from_model = subparsers.add_parser("model", help="Run from stored model")
 
     from_config.add_argument("config", help="Path to config file.")
+    from_config.add_argument("smt_label")
     from_config.add_argument("-X", help="Input data", default=None, required=True)
     from_config.add_argument("-y", help="Input labels", default=None)
     from_config.add_argument("-N", "--name", help="Output folder name")
     
     from_model.add_argument("model", help="Path to fitted model.")
+    from_model.add_argument("smt_label")
     from_model.add_argument("-a", "--action", choices=["transform", "predict"],
                             help="Action to perform.", required=True)
     from_model.add_argument("-X", help="Input data", default=None, required=True)
@@ -138,8 +150,10 @@ if __name__ == '__main__':
     args = arg_parser.parse_args()
 
     try:
+        args.config
+    except AttributeError:
+        ModelAction(args)
+    else:
         config_parser = configparse.ConfigParser()
         config = config_parser.parse_config(args.config)
         ConfigAction(args, config)
-    except AttributeError:
-        ModelAction(args)
