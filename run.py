@@ -41,7 +41,7 @@ class Action(ABC):
             name = basename+"-"+args.name
         else:
             name = basename
-        path = "archive/"+name+"/"
+        path = "data/"+name+"/"
         os.mkdir(path)
         return path
 
@@ -72,7 +72,8 @@ class ConfigAction(Action):
         joblib.dump(self.model, self.save_path+name+".pkl")
        
         if self._X_new_set:
-            np.save(self.save_path+"X_new.npy", self.X_new)  
+            path = self.save_path+"X_new.npy"
+            np.save(path, self.X_new)
 
     def load_model(self):
         return self.config["class"](**self.config["params"])

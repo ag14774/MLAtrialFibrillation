@@ -1,0 +1,16 @@
+#Examples of config settings
+
+#Example 1
+module: "models.transformer"
+class: "RandomSelection"
+action: "fit_transform"
+params:
+  n_components: 1000
+  random_state: 37
+
+#Example 2
+#module: "sklearn.linear_model"
+#class: "LinearRegression"
+#action: "fit"
+#params:
+#  normalize: True

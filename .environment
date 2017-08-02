@@ -7,6 +7,6 @@ dependencies:
   - gitpython
   - pip=9.0.1
   - pip:
-    - git+https://github.com/open-research/sumatra.git
+    - git+https://github.com/vwegmayr/sumatra.git
     - pyyaml==3.12
     - kaggle-cli
