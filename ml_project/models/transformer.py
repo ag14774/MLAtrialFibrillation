@@ -1,13 +1,9 @@
 import numpy as np
 import sklearn as skl
-import pickle
 from sklearn.utils import check_random_state
 from sklearn.utils.validation import check_array
 from sklearn.utils.random import sample_without_replacement
-from sklearn.pipeline import Pipeline
 from numpy.testing import assert_equal
-import subprocess
-
 
 class RandomSelection(skl.base.BaseEstimator, skl.base.TransformerMixin):
 
@@ -70,11 +66,4 @@ class RandomSelection(skl.base.BaseEstimator, skl.base.TransformerMixin):
                      "not have the proper shape."))
         """
         return X_new
-
-
-class MyPipeline(Pipeline):
-    """docstring for MyPipeline"""
-    def __init__(self, arg):
-        super(MyPipeline, self).__init__()
-        self.arg = arg
         
