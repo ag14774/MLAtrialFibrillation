@@ -18,10 +18,10 @@ class Action(ABC):
     """
     def __init__(self, args): 
         self.args = args     
+        self.save_path = self._mk_save_folder()
         self.X, self.y = self._load_data()
         self.X_new, self.y_new = None, None
         self._X_new_set, self._y_new_set = False, False
-        self.save_path = self._mk_save_folder()
 
     @abstractmethod
     def _save(self):
@@ -43,6 +43,7 @@ class Action(ABC):
         #basename = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         basename = self.args.smt_label
         path = "data/"+basename+"/"
+        os.mkdir(path)
         return path
 
 

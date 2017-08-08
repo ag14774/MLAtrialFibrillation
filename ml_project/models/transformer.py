@@ -66,4 +66,3 @@ class RandomSelection(skl.base.BaseEstimator, skl.base.TransformerMixin):
                      "not have the proper shape."))
         """
         return X_new
-        
