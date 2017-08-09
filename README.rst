@@ -25,9 +25,6 @@ Running an experiment
 Make sure the environment is activated:
 
 .. code-block:: shell
-<<<<<<< HEAD:readme.rst
-    source activate ml_project
-=======
 
-    source activate ml-project
->>>>>>> 8df49efdb8849bb4d8b8d4a743fee74957b64c5d:README.rst
+    source activate ml_project
+
