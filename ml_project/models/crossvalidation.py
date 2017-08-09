@@ -1,3 +1,4 @@
+import importlib
 import numpy as np
 import sklearn as skl
 from sklearn.pipeline import Pipeline
@@ -29,50 +30,36 @@ class KernelEstimator(skl.base.BaseEstimator, skl.base.TransformerMixin):
         return np.dot(X, self.coef_) + self.y_mean
 
 
-class GridSearchCV(skl.GridSearchCV):
+class GridSearchCV(skl.model_selection.GridSearchCV):
     """docstring for GridSearchCV"""
-    def __init__(self, arg):
-        super(GridSearchCV, self).__init__()
-        self.arg = arg
+    def __init__(self, est_class, est_params, param_grid, cv=None, n_jobs=1):
+        self.estimator = est_class(est_params)
+        self.param_grid = param_grid
+        self.cv = cv
+        self.n_jobs = n_jobs
+        self.est_params = est_params
+        self.est_class = est_class
+        super(GridSearchCV, self).__init__(self.estimator, param_grid, cv=cv,
+            n_jobs=n_jobs)
+
+    def fit(self, X, y):
+        super(GridSearchCV, self).fit(X, y)
+        print(self.cv_results_)
+
+class Pipeline(skl.pipeline.Pipeline):
+    """docstring for Pipeline"""
+    def __init__(self, class_list):
+        self.class_list = class_list
+        self.steps = self.load_steps(class_list)
+        super(Pipeline, self).__init__(self.steps)
         
-
-# Split the dataset in two equal parts
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.5, random_state=0)
-
-# Set the parameters by cross-validation
-tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4],
-                     'C': [1, 10, 100, 1000]},
-                    {'kernel': ['linear'], 'C': [1, 10, 100, 1000]}]
-
-scores = ['precision', 'recall']
-
-for score in scores:
-    print("# Tuning hyper-parameters for %s" % score)
-    print()
-
-    clf = GridSearchCV(SVC(C=1), tuned_parameters, cv=5,
-                       scoring='%s_macro' % score)
-    clf.fit(X_train, y_train)
-
-    print("Best parameters set found on development set:")
-    print()
-    print(clf.best_params_)
-    print()
-    print("Grid scores on development set:")
-    print()
-    means = clf.cv_results_['mean_test_score']
-    stds = clf.cv_results_['std_test_score']
-    for mean, std, params in zip(means, stds, clf.cv_results_['params']):
-        print("%0.3f (+/-%0.03f) for %r"
-              % (mean, std * 2, params))
-    print()
-
-    print("Detailed classification report:")
-    print()
-    print("The model is trained on the full development set.")
-    print("The scores are computed on the full evaluation set.")
-    print()
-    y_true, y_pred = y_test, clf.predict(X_test)
-    print(classification_report(y_true, y_pred))
-    print()
+    def load_steps(self, class_list):
+        steps = []
+        for dict_ in class_list:
+            name = dict_["class"].__name__
+            if "params" in dict_:
+                params = dict_["params"]
+                steps.append( ( name, dict_["class"](**params) ) )
+            else:
+                steps.append( ( name, dict_["class"]() ) )
+        return steps

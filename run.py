@@ -59,7 +59,8 @@ class ConfigAction(Action):
         super(ConfigAction, self).__init__(args)
         self._check_config(config)
         self.config = config
-        self.model = self._load_model()       
+        self.model = self._load_model()
+        print("MODEL: {}".format(self.model))
         getattr(self, config["action"])()
         self._save()
 

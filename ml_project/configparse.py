@@ -33,12 +33,17 @@ class ConfigParser:
         # Do the wrapper magic only if there is a 'module'
         # and a 'class' attribute(and obviously is dict)
         if isinstance(obj, dict):
-            if 'module' in obj and 'class' in obj and not "submodule" in obj:
+            #if 'module' in obj and 'class' in obj:
+            if any_key_contains("module", obj) and any_key_contains("class", obj):
                 # Assign obj['module'] to the python module
                 # instead of the string
-                obj['module'] = importlib.import_module(obj['module'])
+                module_key = get_full_key("module", obj)
+                class_key = get_full_key("class", obj)
+
+                obj[module_key] = importlib.import_module(obj[module_key])
                 # Assign obj['class'] to the python class instead of the string
-                obj['class'] = getattr(obj['module'], obj['class'])
+                obj[class_key] = getattr(obj[module_key], obj[class_key])
+                obj.pop(module_key)
             # Import module from any file which not necessarily needs to be in a package
             if 'import' in obj and 'class' in obj:
                 spec = importlib.util.spec_from_file_location(obj['class'], obj['import'])
@@ -52,13 +57,18 @@ class ConfigParser:
                 if key != 'module' and key != 'class':
                     ConfigParser.import_python_classes(value)
 
-            #if "module" in obj and "submodule" in obj and "class" in obj:
-            #    module = obj['module']
-            #    obj['module'] = importlib.import_module(obj['module'])
-            #    obj['submodule'] = importlib.import_module(module+"."+obj['submodule'])
-            #    obj['class'] = getattr(obj['submodule'], obj['class'])
-
         # If the object is a list, continue the search for each item
         if isinstance(obj, list):
             for item in obj:
                 ConfigParser.import_python_classes(item)
+
+
+def any_key_contains(string, dict):
+    for key in dict.keys():
+        if string in key:
+            return True
+
+def get_full_key(string, dict):
+    for key in dict.keys():
+        if string in key:
+            return key

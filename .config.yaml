@@ -9,8 +9,27 @@
 #  random_state: 37
 
 #Example 2
-module: "sklearn.linear_model"
-class: "LinearRegression"
-action: "fit"
+#module: "sklearn.linear_model"
+#class: "LinearRegression"
+#action: "fit"
+#params:
+#  normalize: True
+
+module: ml_project.models.crossvalidation
+class: GridSearchCV
+action: fit
 params:
-  normalize: True
+  est_module: ml_project.models.crossvalidation
+  est_class: Pipeline
+  est_params:
+    - module: ml_project.models.transformer
+      class: RandomSelection
+      params:
+        random_state: 37
+    - module: sklearn.linear_model
+      class: LinearRegression
+  param_grid:
+    RandomSelection__n_components:
+      - 100
+      - 1000
+      - 10000
