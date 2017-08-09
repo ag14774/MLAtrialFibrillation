@@ -2,6 +2,7 @@
 import numpy as np
 import argparse
 import os
+import yaml
 import datetime
 import pandas as pd
 
@@ -60,7 +61,6 @@ class ConfigAction(Action):
         self._check_config(config)
         self.config = config
         self.model = self._load_model()
-        print("MODEL: {}".format(self.model))
         getattr(self, config["action"])()
         self._save()
 
@@ -76,12 +76,15 @@ class ConfigAction(Action):
         self.transform()
 
     def _save(self):
-        name = self.config["class"].__name__
-        joblib.dump(self.model, self.save_path+name+".pkl")
+        class_name = self.config["class"].__name__
+        joblib.dump(self.model, self.save_path+class_name+".pkl")
        
         if self._X_new_set:
             path = self.save_path+"X_new.npy"
             np.save(path, self.X_new)
+
+        if class_name == "GridSearchCV":
+            self.model.save(self.save_path)
 
     def _load_model(self):
         return self.config["class"](**self.config["params"])

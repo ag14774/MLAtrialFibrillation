@@ -15,14 +15,14 @@
 #params:
 #  normalize: True
 
-module: ml_project.models.crossvalidation
+module: ml_project.models.model_selection
 class: GridSearchCV
 action: fit
 params:
-  est_module: ml_project.models.crossvalidation
+  est_module: ml_project.models.pipeline
   est_class: Pipeline
   est_params:
-    - module: ml_project.models.transformer
+    - module: ml_project.models.transformers
       class: RandomSelection
       params:
         random_state: 37
