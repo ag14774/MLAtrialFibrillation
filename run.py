@@ -43,11 +43,13 @@ class Action(ABC):
         return X, y
 
     def _mk_save_folder(self):
-        #basename = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-        basename = self.args.smt_label
-        path = "data/"+basename+"/"
-        os.mkdir(path)
-        return path
+        if self.args.smt_label != "debug":
+            basename = self.args.smt_label
+            path = "data/"+basename+"/"
+            os.mkdir(path)
+            return path
+        else:
+            return None
 
 
 class ConfigAction(Action):
@@ -64,7 +66,8 @@ class ConfigAction(Action):
         self.config = config
         self.model = self._load_model()
         getattr(self, config["action"])()
-        self._save()
+        if self.args.smt_label != "debug":
+            self._save()
 
     def fit(self):
         self.model.fit(self.X, self.y)
@@ -85,7 +88,7 @@ class ConfigAction(Action):
             path = self.save_path+"X_new.npy"
             np.save(path, self.X_new)
 
-        if class_name == "GridSearchCV":
+        if hasattr(self.config["class"], "save"):
             self.model.save(self.save_path)
 
     def _load_model(self):
@@ -109,7 +112,8 @@ class ModelAction(Action):
         super(ModelAction, self).__init__(args)
         self.model = self._load_model()       
         getattr(self, args.action)()
-        self._save()
+        if self.args.smt_label != "debug":
+            self._save()
 
     def transform(self):        
         self.X_new = self.model.transform(self.X, self.y)
@@ -126,7 +130,7 @@ class ModelAction(Action):
             df = pd.DataFrame({"Prediction": self.y_new})
             df.index += 1
             df.index.name = "ID"
-            df.to_csv(self.save_path+"y_new.csv")
+            df.to_csv(self.save_path+"y_"+self.args.smt_label+".csv")
 
     def _load_model(self):
         return joblib.load(self.args.model)
@@ -141,19 +145,20 @@ def pprint_config(config_dict):
 if __name__ == '__main__':
 
     arg_parser = argparse.ArgumentParser(description="Scikit runner.")
+    arg_parser.add_argument("smt_label", nargs="?", default="debug")
 
     subparsers = arg_parser.add_subparsers()
-    from_config = subparsers.add_parser("config", help="Run from config file.")
-    from_model = subparsers.add_parser("model", help="Run from stored model")
+    from_config = subparsers.add_parser("config", help="Run from config file.", parents=[arg_parser])
+    from_model = subparsers.add_parser("model", help="Run from stored model", parents=[arg_parser])
 
     from_config.add_argument("config", help="Path to config file.")
-    from_config.add_argument("smt_label")
+    #from_config.add_argument("smt_label", nargs="?", default="debug")
     from_config.add_argument("-X", help="Input data", default=None, required=True)
     from_config.add_argument("-y", help="Input labels", default=None)
     from_config.add_argument("-N", "--name", help="Output folder name")
     
     from_model.add_argument("model", help="Path to fitted model.")
-    from_model.add_argument("smt_label")
+    #from_model.add_argument("smt_label", nargs="?", default="debug")
     from_model.add_argument("-a", "--action", choices=["transform", "predict"],
                             help="Action to perform.", required=True)
     from_model.add_argument("-X", help="Input data", default=None, required=True)
