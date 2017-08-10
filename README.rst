@@ -66,7 +66,7 @@ Let us consider the command from before in more detail:
     $ smt run config .example_config.yaml -X data/X_train.npy 
 
 The first part :code:`smt` invokes Sumatra_, which is an experiment tracking tool.
-The second part :code:`run` tells Sumatra to execute an experiment runner.
+The second part :code:`run` tells Sumatra to execute the experiment runner.
 The argument :code:`config` informs the runner about the experiment type, more about this later.
 Now there are only input arguments left such as config file and data.
 
