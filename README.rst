@@ -109,7 +109,9 @@ Again, Sumatra created an experiment record, which you can use to track input/ou
 Writing your own models
 -----------------------
 
-This framework provides _`ml_project/models/transformers.py`
+.. transformers: ml_project/models/transformers.py
+
+This framework provides _transformers.
 
 
 More tools
