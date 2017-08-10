@@ -107,7 +107,7 @@ Again, Sumatra created an experiment record, which you can use to track input/ou
 More tools
 ----------
 
-.. kaggle-cli: https://github.com/floydwch/kaggle-cli
+.. _kaggle-cli: https://github.com/floydwch/kaggle-cli
 
 A very convenient tool included in the ml-project framework is kaggle-cli_.
 It can be used to submit predictions to kaggle and to view previous submissions.
