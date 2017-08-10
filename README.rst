@@ -96,5 +96,18 @@ the fitted model from before:
     >> Data keys are [20170810-134027/X_new.npy(b33b0e0b794b64e5d284a602f5440620a21cac1c [2017-08-10 13:40:32])]
 
 The experiment type is :code:`model` now. The input arguments are the model to
-use (the one we created earlier), the input data, and finally the action that the
-model should perform on the input (:code:`transform` in this case).
+use (the one we created earlier), the input data,
+
+and finally the action that the model should perform on the input
+(:code:`transform` in this case).
+
+Again, Sumatra created an experiment record, which you can use to track input/output paths.
+
+
+More tools
+----------
+
+.. kaggle-cli: https://github.com/floydwch/kaggle-cli
+
+A very convenient tool included in the ml-project framework is kaggle-cli_.
+It can be used to submit predictions to kaggle and to view previous submissions.
