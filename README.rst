@@ -109,7 +109,13 @@ Again, Sumatra created an experiment record, which you can use to track input/ou
 Writing your own models
 -----------------------
 
-.. _transformers: ml_project/models/transformers.py
+.. _pipeline: ml_project/models/pipeline.py
+.. _model_selection: ml_project/models/model_selection.py
+
+In principle, the project framework can handle scikit-learn-style classes that implement
+fit/fit_transform/transform/predict functions. In fact, it is recommended to
+derive your estimator classes from the sklearn base classes, so that you can
+take advantage of their extensive funcitonality.
 
 This framework provides transformers_.
 
