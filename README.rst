@@ -1,15 +1,20 @@
 ETH Machine Learning Projects
 =============================
 
+.. _scikit-learn: http://scikit-learn.org/stable/
+.. _sumatra: https://pythonhosted.org/Sumatra/
+.. _miniconda: https://conda.io/docs/install/quick.html
+
 This repository contains the framework for the practical projects offered
-during the *Machine Learning* course at ETH Zurich.
+during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
+
+* Convenient execution of machine learning models conforming to the scikit-learn_ pattern.
+* Structured & reproducible experiments by integration of sumatra_ and miniconda_.
 
 Getting Started
 ---------------
 
 First you need to install miniconda_ on your system.
-
-.. _miniconda: https://conda.io/docs/install/quick.html#linux-miniconda-install
 
 Having installed miniconda, clone the repository and run the setup script:
 
@@ -63,17 +68,15 @@ You can choose from different examples in the `.example_config` file.
 More details on experiments
 ---------------------------
 
-.. _Sumatra: https://pythonhosted.org/Sumatra/
-
 Let us consider the command from before in more detail:
 
 .. code-block:: shell
 
     $ smt run config .example_config.yaml -X data/X_train.npy 
 
-The first part :code:`smt` invokes Sumatra_, which is an experiment tracking tool.
+The first part :code:`smt` invokes sumatra_, which is an experiment tracking tool.
 
-The second part :code:`run` tells Sumatra to execute the experiment runner.
+The second part :code:`run` tells sumatra to execute the experiment runner.
 
 The argument :code:`config` informs the runner about the experiment type, more about this later.
 
@@ -102,6 +105,11 @@ and finally the action that the model should perform on the input
 (:code:`transform` in this case).
 
 Again, Sumatra created an experiment record, which you can use to track input/output paths.
+
+Writing your own models
+-----------------------
+
+This framework provides _`ml_project/models/transformers.py`
 
 
 More tools
