@@ -2,6 +2,7 @@
 import numpy as np
 import argparse
 import os
+import sys
 import yaml
 import datetime
 import pandas as pd
@@ -10,6 +11,7 @@ from sklearn.externals import joblib
 from abc import ABC
 from abc import abstractmethod
 from ml_project import configparse
+from pprint import pprint
 
 class Action(ABC):
     """Abstract Action class
@@ -129,6 +131,13 @@ class ModelAction(Action):
     def _load_model(self):
         return joblib.load(self.args.model)
 
+
+def pprint_config(config_dict):
+    print("\n=========== Config ===========")
+    pprint(config_dict)
+    print("==============================\n")
+    sys.stdout.flush()
+
 if __name__ == '__main__':
 
     arg_parser = argparse.ArgumentParser(description="Scikit runner.")
@@ -161,4 +170,5 @@ if __name__ == '__main__':
     else:
         config_parser = configparse.ConfigParser()
         config = config_parser.parse_config(args.config)
+        pprint_config(config)
         ConfigAction(args, config)
