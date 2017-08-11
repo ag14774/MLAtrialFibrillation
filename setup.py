@@ -21,15 +21,17 @@ def setup():
     else:
         action = getattr(subprocess, "run")
 
-    action(["conda", "env", "create", "-n", "ml_project", "-f", ".environment"])
+    action(["conda", "env", "create", "-n", "ml_project", "-f",
+            ".environment"])
 
     action(["bash", "-c", "source activate ml_project && "
             "smt init -d ./data -i ./data -e python -m run.py "
             "-c store-diff -l cmdline ml_project"])
-    
-    print("\n=================================================================")
-    print("Please type 'source activate ml_project' to activate environment.")
-    print("=================================================================")
+
+    print("\n========================================================")
+    print("Type 'source activate ml_project' to activate environment.")
+    print("==========================================================")
+
 
 if __name__ == '__main__':
     setup()

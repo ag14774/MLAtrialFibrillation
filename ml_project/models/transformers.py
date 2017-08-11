@@ -1,8 +1,8 @@
-import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils import check_random_state
 from sklearn.utils.validation import check_array
 from sklearn.utils.random import sample_without_replacement
+
 
 class RandomSelection(BaseEstimator, TransformerMixin):
 
@@ -12,7 +12,7 @@ class RandomSelection(BaseEstimator, TransformerMixin):
 
         self.components = None
 
-    def fit(self, X, y=None):   
+    def fit(self, X, y=None):
         X = check_array(X)
         n_samples, n_features = X.shape
 
@@ -23,7 +23,7 @@ class RandomSelection(BaseEstimator, TransformerMixin):
                             random_state=random_state)
         return self
 
-    def transform(self, X, y=None):       
+    def transform(self, X, y=None):
         X = check_array(X)
         n_samples, n_features = X.shape
         X_new = X[:, self.components]

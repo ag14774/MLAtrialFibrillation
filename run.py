@@ -3,8 +3,6 @@ import numpy as np
 import argparse
 import os
 import sys
-import yaml
-import datetime
 import pandas as pd
 
 from sklearn.externals import joblib
@@ -16,12 +14,12 @@ from pprint import pprint
 
 class Action(ABC):
     """Abstract Action class
-    
+
     Args:
         args (Namespace): Parsed arguments
     """
-    def __init__(self, args): 
-        self.args = args     
+    def __init__(self, args):
+        self.args = args
         self.save_path = self._mk_save_folder()
         self.X, self.y = self._load_data()
         self.X_new, self.y_new = None, None
@@ -48,7 +46,7 @@ class Action(ABC):
 
     def _load_data(self):
         X = np.load(self.args.X)
-        if self.args.y != None:
+        if self.args.y is not None:
             y = np.loadtxt(self.args.y)
         else:
             y = None
@@ -81,7 +79,7 @@ class ConfigAction(Action):
     def fit(self):
         self.model.fit(self.X, self.y)
 
-    def transform(self):        
+    def transform(self):
         self.X_new = self.model.transform(self.X, self.y)
         self._X_new_set = True
 
@@ -92,7 +90,7 @@ class ConfigAction(Action):
     def _save(self):
         class_name = self.config["class"].__name__
         joblib.dump(self.model, self.save_path+class_name+".pkl")
-       
+
         if self._X_new_set:
             path = self.save_path+"X_new.npy"
             np.save(path, self.X_new)
@@ -105,9 +103,9 @@ class ConfigAction(Action):
 
     def _check_action(self, action):
         if action not in ["fit", "fit_transform"]:
-            raise Error("Can only run fit or fit_transform from config, got {}."
-                                    .format(action))
-    
+            raise RuntimeError("Can only run fit or fit_transform from config,"
+                               " got {}.".format(action))
+
     def pprint_config(self):
         print("\n=========== Config ===========")
         pprint(self.config)
@@ -126,7 +124,7 @@ class ModelAction(Action):
         self._check_action(args.action)
         self.act()
 
-    def transform(self):        
+    def transform(self):
         self.X_new = self.model.transform(self.X, self.y)
         self._X_new_set = True
 
@@ -136,7 +134,7 @@ class ModelAction(Action):
 
     def _save(self):
         if self._X_new_set:
-            np.save(self.save_path+"X_new.npy", self.X_new) 
+            np.save(self.save_path+"X_new.npy", self.X_new)
         if self._y_new_set:
             df = pd.DataFrame({"Prediction": self.y_new})
             df.index += 1
@@ -148,8 +146,8 @@ class ModelAction(Action):
 
     def _check_action(self, action):
         if action not in ["transform", "predict"]:
-            raise Error("Can only run transform or predict from model, got {}."
-                                    .format(action))
+            raise RuntimeError("Can only run transform or predict from model,"
+                               " got {}.".format(action))
 
 
 if __name__ == '__main__':
@@ -162,14 +160,15 @@ if __name__ == '__main__':
     arg_parser.add_argument("-X", help="Input data", required=True)
     arg_parser.add_argument("-y", help="Input labels")
 
-    arg_parser.add_argument("-a", "--action", choices=["transform", "predict", 
-        "fit", "fit_transform"], help="Action to perform.", required=True)
+    arg_parser.add_argument("-a", "--action", choices=["transform", "predict",
+                            "fit", "fit_transform"], help="Action to perform.",
+                            required=True)
 
     arg_parser.add_argument("smt_label", nargs="?", default="debug")
 
     args = arg_parser.parse_args()
 
-    if args.config == None:
+    if args.config is None:
         ModelAction(args)
     else:
         config_parser = configparse.ConfigParser()
