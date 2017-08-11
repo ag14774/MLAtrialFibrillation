@@ -116,7 +116,7 @@ classes, so that you can take advantage of their extensive funcitonality.
 This framework already implements an interface to the sklearn classes pipeline_
 and gridsearch_.
 
-Check out the example config_ to find out more how to use them.
+Check out the `example config`_ to find out more how to use them.
 
 
 More tools
