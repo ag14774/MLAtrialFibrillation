@@ -75,7 +75,7 @@ Let us consider the command from before in more detail:
 
 * :code:`smt` invokes sumatra_, which is an experiment tracking tool.
 
-* :code:`run` tells sumatra to execute the experiment runner.
+* :code:`run` tells sumatra_ to execute the experiment runner.
 
 * :code:`--config` points to the paramter file for this experiment.
 
@@ -99,7 +99,7 @@ the fitted model from before:
     >> Record label for this run: '20170810-134027'
     >> Data keys are [20170810-134027/X_new.npy(b33b0e0b794b64e5d284a602f5440620a21cac1c [2017-08-10 13:40:32])]
 
-Again, Sumatra created an experiment record, which you can use to track input/output paths.
+Again, sumatra_ created an experiment record, which you can use to track input/output paths.
 
 Writing your own models
 -----------------------
