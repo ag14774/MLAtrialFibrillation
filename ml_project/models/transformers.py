@@ -5,7 +5,7 @@ from sklearn.utils.random import sample_without_replacement
 
 
 class RandomSelection(BaseEstimator, TransformerMixin):
-
+    """Random Selection of features"""
     def __init__(self, n_components=1000, random_state=None):
         self.n_components = n_components
         self.random_state = random_state
