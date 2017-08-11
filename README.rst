@@ -4,6 +4,9 @@ ETH Machine Learning Projects
 .. _scikit-learn: http://scikit-learn.org/stable/
 .. _sumatra: https://pythonhosted.org/Sumatra/
 .. _miniconda: https://conda.io/docs/install/quick.html
+.. _pipeline: ml_project/models/pipeline.py
+.. _gridsearch: ml_project/models/model_selection.py
+.. _example_config: .example_config.yaml
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -62,7 +65,7 @@ To view the experiment record, type :code:`smtweb`.
 This command will open a new window in your webbrowser, where you can explore
 the information stored about the example experiment.
 
-You can choose from different examples in the `.example_config` file.
+You can choose from different examples in the example_config_ file.
 
 More details on experiments
 ---------------------------
@@ -103,10 +106,6 @@ Again, sumatra_ created an experiment record, which you can use to track input/o
 
 Writing your own models
 -----------------------
-
-.. _pipeline: ml_project/models/pipeline.py
-.. _gridsearch: ml_project/models/model_selection.py
-.. _example_config: .example_config.yaml
 
 In principle, the project framework can handle sklearn-style classes that implement
 fit/fit_transform/transform/predict functions.
