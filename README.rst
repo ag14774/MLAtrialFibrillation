@@ -105,14 +105,18 @@ Writing your own models
 -----------------------
 
 .. _pipeline: ml_project/models/pipeline.py
-.. _model_selection: ml_project/models/model_selection.py
+.. _gridsearch: ml_project/models/model_selection.py
+.. _example_config: .example_config.yaml
 
-In principle, the project framework can handle scikit-learn-style classes that implement
+In principle, the project framework can handle sklearn-style classes that implement
 fit/fit_transform/transform/predict functions. In fact, it is recommended to
 derive your estimator classes from the sklearn base classes, so that you can
 take advantage of their extensive funcitonality.
 
-This framework provides transformers_.
+This framework already implements an interface to the sklearn classes pipeline_
+and gridsearch_.
+
+Check out the example_config_ to find out more how to use them.
 
 
 More tools
