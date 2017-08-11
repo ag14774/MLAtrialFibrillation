@@ -2,6 +2,7 @@ ETH Machine Learning Projects
 =============================
 
 .. _scikit-learn: http://scikit-learn.org/stable/
+.. _sklearn-dev-guide: http://scikit-learn.org/stable/developers/index.html
 .. _sumatra: https://pythonhosted.org/Sumatra/
 .. _miniconda: https://conda.io/docs/install/quick.html
 .. _pipeline: ml_project/models/pipeline.py
@@ -112,6 +113,8 @@ fit/fit_transform/transform/predict functions.
 
 In fact, it is recommended to derive your estimator classes from the sklearn base
 classes, so that you can take advantage of their extensive funcitonality.
+Make sure to read the sklearn-dev-guide_, especially the sections *Coding guidelines*,
+*APIs of scikit-learn objects*, and *Rolling your own estimator*.
 
 This framework already implements an interface to the sklearn classes pipeline_
 and gridsearch_.
