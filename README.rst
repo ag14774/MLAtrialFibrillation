@@ -113,6 +113,7 @@ fit/fit_transform/transform/predict functions.
 
 In fact, it is recommended to derive your estimator classes from the sklearn base
 classes, so that you can take advantage of their extensive funcitonality.
+
 Make sure to read the sklearn-dev-guide_, especially the sections *Coding guidelines*,
 *APIs of scikit-learn objects*, and *Rolling your own estimator*.
 
