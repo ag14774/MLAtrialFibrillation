@@ -109,9 +109,10 @@ Writing your own models
 .. _example_config: .example_config.yaml
 
 In principle, the project framework can handle sklearn-style classes that implement
-fit/fit_transform/transform/predict functions. In fact, it is recommended to
-derive your estimator classes from the sklearn base classes, so that you can
-take advantage of their extensive funcitonality.
+fit/fit_transform/transform/predict functions.
+
+In fact, it is recommended to derive your estimator classes from the sklearn base
+classes, so that you can take advantage of their extensive funcitonality.
 
 This framework already implements an interface to the sklearn classes pipeline_
 and gridsearch_.
