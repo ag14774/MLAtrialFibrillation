@@ -37,11 +37,10 @@ To run an example experiment, simply type
 
 .. code-block:: shell
 
-    $ smt run config .example_config.yaml -X data/X_train.npy 
+    $ smt run --config .example_config.yaml -X data/X_train.npy -a fit_transform
 
     >> =========== Config ===========
-    >> {'action': 'fit_transform',
-    >> 'class': <class 'ml_project.models.transformers.RandomSelection'>,
+    >> {'class': <class 'ml_project.models.transformers.RandomSelection'>,
     >> 'params': {'n_components': 1000, 'random_state': 37}}
     >> ==============================
 
@@ -72,17 +71,19 @@ Let us consider the command from before in more detail:
 
 .. code-block:: shell
 
-    $ smt run config .example_config.yaml -X data/X_train.npy 
+    $ smt run --config .example_config.yaml -X data/X_train.npy -a fit_transform
 
-The first part :code:`smt` invokes sumatra_, which is an experiment tracking tool.
+* :code:`smt` invokes sumatra_, which is an experiment tracking tool.
 
-The second part :code:`run` tells sumatra to execute the experiment runner.
+* :code:`run` tells sumatra to execute the experiment runner.
 
-The argument :code:`config` informs the runner about the experiment type, more about this later.
+* :code:`--config` points to the paramter file for this experiment.
 
-Now there are only input arguments left such as config file and data.
+* :code:`-X` points to the input data
 
-In addition to :code:`config` experiments, you can run :code:`model` experiments.
+* :code:`-a` tells the runner which action to perform.
+
+In addition to :code:`--config` experiments, you can run :code:`--model` experiments.
 
 These two cover fit/fit_transform and transform/predict, respectively.
 
@@ -94,15 +95,9 @@ the fitted model from before:
 
 .. code-block:: shell
 
-    $ smt run model data/20170810-131658/RandomSelection.pkl -X data/X_test.npy -a transform
+    $ smt run --model data/20170810-131658/RandomSelection.pkl -X data/X_test.npy -a transform
     >> Record label for this run: '20170810-134027'
     >> Data keys are [20170810-134027/X_new.npy(b33b0e0b794b64e5d284a602f5440620a21cac1c [2017-08-10 13:40:32])]
-
-The experiment type is :code:`model` now. The input arguments are the model to
-use (the one we created earlier), the input data,
-
-and finally the action that the model should perform on the input
-(:code:`transform` in this case).
 
 Again, Sumatra created an experiment record, which you can use to track input/output paths.
 
