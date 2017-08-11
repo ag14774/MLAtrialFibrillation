@@ -5,7 +5,7 @@
 #The second line of each example provides the command for the terminal
 
 #Example 1
-#smt run config .example_config.yaml -X data/X_train.npy
+#smt run config .example_config.yaml -X data/X_train.npy -a fit_transform
 module: "ml_project.models.transformers"
 class: "RandomSelection"
 params:
@@ -13,14 +13,14 @@ params:
   random_state: 37
 
 #Example 2 (don't run it, might crash your machine)
-#smt run config .example_config.yaml -X data/X_train.npy -y data/y_1.csv
+#smt run config .example_config.yaml -X data/X_train.npy -y data/y_1.csv -a fit
 #module: "sklearn.linear_model"
 #class: "LinearRegression"
 #params:
 #  normalize: True
 
 #Example 3
-#smt run config .example_config.yaml -X data/X_train.npy -y data/y_1.csv
+#smt run config .example_config.yaml -X data/X_train.npy -y data/y_1.csv -a fit
 #module: ml_project.models.pipeline
 #class: Pipeline
 #params:
@@ -34,7 +34,7 @@ params:
 #      class: LinearRegression
 
 #Example 4
-#smt run config .example_config.yaml -X data/X_train.npy -y data/y_1.csv
+#smt run config .example_config.yaml -X data/X_train.npy -y data/y_1.csv -a fit
 #module: ml_project.models.model_selection
 #class: GridSearchCV
 #params:
