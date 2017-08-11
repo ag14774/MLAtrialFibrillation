@@ -5,6 +5,7 @@ dependencies:
   - scipy=0.19.1
   - pandas=0.20.3
   - gitpython
+  - flake8
   - pip=9.0.1
   - pip:
     - git+https://gitlab.vis.ethz.ch/vwegmayr/sumatra.git
