@@ -6,7 +6,7 @@ ETH Machine Learning Projects
 .. _miniconda: https://conda.io/docs/install/quick.html
 .. _pipeline: ml_project/models/pipeline.py
 .. _gridsearch: ml_project/models/model_selection.py
-.. _example config: .example_config.yaml
+.. _`example config`: .example_config.yaml
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -65,7 +65,7 @@ To view the experiment record, type :code:`smtweb`.
 This command will open a new window in your webbrowser, where you can explore
 the information stored about the example experiment.
 
-You can choose from different examples in the example config_ file.
+You can choose from different examples in the `example config`_ file.
 
 More details on experiments
 ---------------------------
