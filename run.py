@@ -13,6 +13,7 @@ from abc import abstractmethod
 from ml_project import configparse
 from pprint import pprint
 
+
 class Action(ABC):
     """Abstract Action class
     
@@ -33,6 +34,17 @@ class Action(ABC):
     @abstractmethod
     def _load_model(self):
         pass
+
+    @abstractmethod
+    def _check_action(self):
+        pass
+
+    def act(self):
+        self._check_action(self.args.action)
+        self.model = self._load_model()
+        getattr(self, self.args.action)()
+        if self.args.smt_label != "debug":
+            self._save()
 
     def _load_data(self):
         X = np.load(self.args.X)
@@ -62,12 +74,9 @@ class ConfigAction(Action):
     """
     def __init__(self, args, config):
         super(ConfigAction, self).__init__(args)
-        self._check_config(config)
         self.config = config
-        self.model = self._load_model()
-        getattr(self, config["action"])()
-        if self.args.smt_label != "debug":
-            self._save()
+        self.pprint_config()
+        self.act()
 
     def fit(self):
         self.model.fit(self.X, self.y)
@@ -94,13 +103,17 @@ class ConfigAction(Action):
     def _load_model(self):
         return self.config["class"](**self.config["params"])
 
-    def _check_config(self, config):
-        if config["action"] not in ["fit", "fit_transform"]:
+    def _check_action(self, action):
+        if action not in ["fit", "fit_transform"]:
             raise Error("Can only run fit or fit_transform from config, got {}."
-                        .format(config["action"]))
+                                    .format(action))
+    
+    def pprint_config(self):
+        print("\n=========== Config ===========")
+        pprint(self.config)
+        print("==============================\n")
+        sys.stdout.flush()
 
-        if not config["class"]:
-            raise Error("Model class not specified in config file.")
 
 class ModelAction(Action):
     """Class to model actions
@@ -110,10 +123,8 @@ class ModelAction(Action):
     """
     def __init__(self, args):
         super(ModelAction, self).__init__(args)
-        self.model = self._load_model()       
-        getattr(self, args.action)()
-        if self.args.smt_label != "debug":
-            self._save()
+        self._check_action(args.action)
+        self.act()
 
     def transform(self):        
         self.X_new = self.model.transform(self.X, self.y)
@@ -135,45 +146,32 @@ class ModelAction(Action):
     def _load_model(self):
         return joblib.load(self.args.model)
 
+    def _check_action(self, action):
+        if action not in ["transform", "predict"]:
+            raise Error("Can only run transform or predict from model, got {}."
+                                    .format(action))
 
-def pprint_config(config_dict):
-    print("\n=========== Config ===========")
-    pprint(config_dict)
-    print("==============================\n")
-    sys.stdout.flush()
 
 if __name__ == '__main__':
 
     arg_parser = argparse.ArgumentParser(description="Scikit runner.")
+
+    arg_parser.add_argument("-c", "--config", help="config file")
+    arg_parser.add_argument("-m", "--model", help="model file")
+
+    arg_parser.add_argument("-X", help="Input data", required=True)
+    arg_parser.add_argument("-y", help="Input labels")
+
+    arg_parser.add_argument("-a", "--action", choices=["transform", "predict", 
+        "fit", "fit_transform"], help="Action to perform.", required=True)
+
     arg_parser.add_argument("smt_label", nargs="?", default="debug")
 
-    subparsers = arg_parser.add_subparsers()
-    from_config = subparsers.add_parser("config", help="Run from config file.", parents=[arg_parser])
-    from_model = subparsers.add_parser("model", help="Run from stored model", parents=[arg_parser])
-
-    from_config.add_argument("config", help="Path to config file.")
-    #from_config.add_argument("smt_label", nargs="?", default="debug")
-    from_config.add_argument("-X", help="Input data", default=None, required=True)
-    from_config.add_argument("-y", help="Input labels", default=None)
-    from_config.add_argument("-N", "--name", help="Output folder name")
-    
-    from_model.add_argument("model", help="Path to fitted model.")
-    #from_model.add_argument("smt_label", nargs="?", default="debug")
-    from_model.add_argument("-a", "--action", choices=["transform", "predict"],
-                            help="Action to perform.", required=True)
-    from_model.add_argument("-X", help="Input data", default=None, required=True)
-    from_model.add_argument("-y", help="Input labels", default=None)
-    from_model.add_argument("-N", "--name", help="Output folder name")
-
-    
     args = arg_parser.parse_args()
 
-    try:
-        args.config
-    except AttributeError:
+    if args.config == None:
         ModelAction(args)
     else:
         config_parser = configparse.ConfigParser()
         config = config_parser.parse_config(args.config)
-        pprint_config(config)
         ConfigAction(args, config)
