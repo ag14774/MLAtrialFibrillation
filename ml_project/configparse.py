@@ -23,7 +23,7 @@ class ConfigParser:
         with the attributes from the config file but with classes
         instead of strings as values.
         """
-        filename = os.path.expanduser(filename)
+        filename = os.path.normpath(os.path.expanduser(filename))
         with open(filename) as config_file:
             config_dict = yaml.load(config_file)
         ConfigParser.import_python_classes(config_dict)

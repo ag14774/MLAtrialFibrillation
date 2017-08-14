@@ -10,6 +10,7 @@ from abc import ABC
 from abc import abstractmethod
 from ml_project import configparse
 from pprint import pprint
+from os.path import normpath
 
 
 class Action(ABC):
@@ -56,7 +57,7 @@ class Action(ABC):
         if self.args.smt_label != "debug":
             basename = self.args.smt_label
             path = "data/"+basename+"/"
-            os.mkdir(path)
+            os.mkdir(normpath(path))
             return path
         else:
             return None
@@ -89,11 +90,12 @@ class ConfigAction(Action):
 
     def _save(self):
         class_name = self.config["class"].__name__
-        joblib.dump(self.model, self.save_path+class_name+".pkl")
+        joblib.dump(self.model,
+                    normpath(self.save_path+class_name+".pkl"))
 
         if self._X_new_set:
             path = self.save_path+"X_new.npy"
-            np.save(path, self.X_new)
+            np.save(normpath(path), self.X_new)
 
         if hasattr(self.config["class"], "save"):
             self.model.save(self.save_path)
@@ -134,12 +136,12 @@ class ModelAction(Action):
 
     def _save(self):
         if self._X_new_set:
-            np.save(self.save_path+"X_new.npy", self.X_new)
+            np.save(normpath(self.save_path+"X_new.npy"), self.X_new)
         if self._y_new_set:
             df = pd.DataFrame({"Prediction": self.y_new})
             df.index += 1
             df.index.name = "ID"
-            df.to_csv(self.save_path+"y_"+self.args.smt_label+".csv")
+            df.to_csv(normpath(self.save_path+"y_"+self.args.smt_label+".csv"))
 
     def _load_model(self):
         return joblib.load(self.args.model)
