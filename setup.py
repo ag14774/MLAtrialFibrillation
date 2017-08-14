@@ -18,6 +18,8 @@ def setup():
     """
     if sys.version_info.major < 3:
         action = getattr(subprocess, "call")
+    elif sys.version_info.minor < 5:
+        action = getattr(subprocess, "call")
     else:
         action = getattr(subprocess, "run")
 
