@@ -37,6 +37,12 @@ Make sure the environment is activated:
 
     source activate ml_project
 
+If you encounter problems with site-packages try:
+
+.. code-block:: shell
+
+    export PYTHONNOUSERSITE=True; source activate ml_project
+
 To run an example experiment, simply type
 
 .. code-block:: shell
