@@ -8,6 +8,8 @@ ETH Machine Learning Projects
 .. _pipeline: ml_project/models/pipeline.py
 .. _gridsearch: ml_project/models/model_selection.py
 .. _`example config`: .example_config.yaml
+.. _VirtualBox: https://www.virtualbox.org/
+.. _Ubuntu: https://www.ubuntu.com/download/desktop
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -15,8 +17,28 @@ during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
 * Convenient execution of machine learning models conforming to the scikit-learn_ pattern.
 * Structured & reproducible experiments by integration of sumatra_ and miniconda_.
 
-Getting Started
----------------
+Getting Started (Non-Linux)
+---------------------------
+
+The project framework has been tested in Linux (Ubuntu) environments only. If you
+are using Linux already, you can skip forward to Getting Started for Linux.
+
+If you are using Mac or Windows, please install VirtualBox_ and create an 64-bit Ubuntu_
+virtual machine (VM).
+
+If you can not choose 64-bit Ubuntu in VirtualBox, you might have to enable
+virtualization in your BIOS.
+
+Once your VM is running, you only need to install git:
+
+.. code-block:: shell
+
+    sudo apt-get install git
+
+After that, please continue with Getting Started for Linux.
+
+Getting Started (Linux)
+-----------------------
 
 First you need to install miniconda_ on your system.
 
