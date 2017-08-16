@@ -162,7 +162,7 @@ Code Submission
 ---------------
 
 It is required to publish your code shortly after the kaggle submission deadline
-(kaggle submiŝsion deadline + 24 hours).
+(kaggle submission deadline + 24 hours).
 
 For this purpose, create and push a new branch with the same name as your kaggle name.
 Your kaggle name had to be set to your ETHZ/UZH email name token.
