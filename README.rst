@@ -138,20 +138,54 @@ Again, sumatra_ created an experiment record, which you can use to track input/o
 Writing your own models
 -----------------------
 
-In principle, the project framework can handle sklearn-style classes that implement
+The project framework can handle sklearn-style classes that implement
 fit/fit_transform/transform/predict functions.
 
-In fact, it is recommended to derive your estimator classes from the sklearn base
-classes, so that you can take advantage of their extensive funcitonality.
+Please implement your models as classes which conform with the sklearn pattern.
+With this common strucutre, you can easily read and reuse code created by others.
+
+In general, it is recommended to take advantage of the extensive functionality of the sklearn API.
 
 Make sure to read the sklearn-dev-guide_, especially the sections *Coding guidelines*,
 *APIs of scikit-learn objects*, and *Rolling your own estimator*.
 
+Furthermore, take advantage that sklearn is open source.
+
+Look at their code, it is very instructive!
+
 This framework already implements an interface to the sklearn classes pipeline_
 and gridsearch_.
 
-Check out the `example config`_ to find out more how to use them.
+Check out the `example config`_ to find out more about how to use them.
 
+Code Submission
+---------------
+
+It is required to publish your code shortly after the kaggle submission deadline
+(kaggle submiŝsion deadline + 24 hours).
+
+For this purpose, create and push a new branch with the same name as your kaggle name.
+Your kaggle name had to be set to your ETHZ/UZH email name token.
+
+ETHZ email: mmuster@student.ethz.ch
+name token: mmuster
+name of branch: mmuster
+
+Before you push, make sure that your code quality is good. You can check by running
+
+.. code-block:: shell
+
+    flake8
+    
+in the ml-project folder. It will return a list of quality errors.
+
+Try to run it from the beginning, otherwise the list could get very long.
+
+This repository runs an automatic quality check, when you push your branch.
+
+We accept only code that passes the check.
+
+Additionally, we check the timestamp of the push to determine if the code was submitted duely.
 
 More tools
 ----------
