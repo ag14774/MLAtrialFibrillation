@@ -168,7 +168,9 @@ For this purpose, create and push a new branch with the same name as your kaggle
 Your kaggle name had to be set to your ETHZ/UZH email name token.
 
 ETHZ email: mmuster@student.ethz.ch
+
 name token: mmuster
+
 name of branch: mmuster
 
 Before you push, make sure that your code quality is good. You can check by running
