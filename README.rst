@@ -10,6 +10,9 @@ ETH Machine Learning Projects
 .. _`example config`: .example_config.yaml
 .. _VirtualBox: https://www.virtualbox.org/
 .. _Ubuntu: https://www.ubuntu.com/download/desktop
+.. _data: data/
+.. _kaggle-cli: https://github.com/floydwch/kaggle-cli
+.. _kaggle: https://inclass.kaggle.com/c/ml-project-1
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -25,6 +28,8 @@ are using Linux already, you can skip forward to Getting Started for Linux.
 
 If you are using Mac or Windows, please install VirtualBox_ and create an 64-bit Ubuntu_
 virtual machine (VM).
+
+Make sure you allocate sufficient RAM (>= 8GB) and Memory (>= 64GB) for the VM.
 
 If you can not choose 64-bit Ubuntu in VirtualBox, you might have to enable
 virtualization in your BIOS.
@@ -49,6 +54,9 @@ Having installed miniconda, clone the repository and run the setup script:
     git clone https://gitlab.vis.ethz.ch/vwegmayr/ml-project.git
     cd ml-project
     python setup.py
+    
+Make sure you have downloaded the data to the data_ folder, either by using the
+kaggle-cli_ tool or from the kaggle_ homepage.
 
 Running an example experiment
 -----------------------------
@@ -147,8 +155,6 @@ Check out the `example config`_ to find out more how to use them.
 
 More tools
 ----------
-
-.. _kaggle-cli: https://github.com/floydwch/kaggle-cli
 
 A very convenient tool included in the ml-project framework is kaggle-cli_.
 It can be used to submit predictions to kaggle and to view previous submissions.
