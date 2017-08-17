@@ -158,6 +158,8 @@ Again, sumatra_ created an experiment record, which you can use to track input/o
 Writing your own models
 -----------------------
 
+.. _models: ml_project/models
+
 The project framework can handle sklearn-style classes that implement
 fit/fit_transform/transform/predict functions.
 
