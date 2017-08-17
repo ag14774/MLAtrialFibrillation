@@ -162,6 +162,16 @@ Furthermore, take advantage that sklearn is open source. Look at their code, it 
 This framework already implements an interface to the sklearn classes pipeline_
 and gridsearch_. Check out the `example config`_ to find out more about how to use them.
 
+Debugging without Sumatra
+-------------------------
+
+If you only want to check if your code runs without invoking sumatra and without
+saving outputs, you can simply run
+
+.. code-block:: shell
+
+    python run.py [-h] [-c CONFIG] [-m MODEL] -X X [-y Y] -a {transform,predict,fit,fit_transform}
+
 Code Submission
 ---------------
 
