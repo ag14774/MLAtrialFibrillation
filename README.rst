@@ -5,8 +5,8 @@ ETH Machine Learning Projects
 .. _sklearn-dev-guide: http://scikit-learn.org/stable/developers/index.html
 .. _sumatra: https://pythonhosted.org/Sumatra/
 .. _miniconda: https://conda.io/docs/install/quick.html
-.. _pipeline: ml_project/models/pipeline.py
-.. _gridsearch: ml_project/models/model_selection.py
+.. _pipeline: ml_project/pipeline.py
+.. _gridsearch: ml_project/model_selection.py
 .. _`example config`: .example_config.yaml
 .. _VirtualBox: https://www.virtualbox.org/
 .. _Ubuntu: https://www.ubuntu.com/download/desktop
@@ -29,7 +29,7 @@ are using Linux already, you can skip forward to Getting Started for Linux.
 If you are using Mac or Windows, please install VirtualBox_ and create an 64-bit Ubuntu_
 virtual machine (VM).
 
-Make sure you allocate sufficient RAM (>= 8GB) and Memory (>= 64GB) for the VM.
+Make sure you allocate sufficient RAM (>= 8GB) and disk space (>= 64GB) for the VM.
 
 If you can not choose 64-bit Ubuntu in VirtualBox, you might have to enable
 virtualization in your BIOS.
@@ -38,7 +38,9 @@ Once your VM is running, you only need to install git:
 
 .. code-block:: shell
 
-    sudo apt-get install git
+    sudo aptitude install git
+
+(Code blocks in this README show Unix shell commands.)
 
 After that, please continue with Getting Started for Linux.
 
@@ -54,7 +56,7 @@ Having installed miniconda, clone the repository and run the setup script:
     git clone https://gitlab.vis.ethz.ch/vwegmayr/ml-project.git
     cd ml-project
     python setup.py
-    
+
 Make sure you have downloaded the data to the data_ folder, either by using the
 kaggle-cli_ tool or from the kaggle_ homepage.
 
@@ -77,7 +79,7 @@ To run an example experiment, simply type
 
 .. code-block:: shell
 
-    $ smt run --config .example_config.yaml -X data/X_train.npy -a fit_transform
+    smt run --config .example_config.yaml -X data/X_train.npy -a fit_transform
 
     >> =========== Config ===========
     >> {'class': <class 'ml_project.models.transformers.RandomSelection'>,
@@ -91,7 +93,7 @@ To run an example experiment, simply type
 The default experiment will reduce the dimensionality of the training data by
 selecting 1000 dimensions at random.
 
-For the experiment shown above, you would find the results in
+Results can be found in timestamped directories :code:`data/YYYYMMDD-hhmmss`, i.e. for the experiment shown above, you would find the results in
 :code:`data/20170810-131658`.
 
 It produced two outputs, first the fitted model *RandomSelection.pkl* and second
@@ -107,11 +109,11 @@ You can choose from different examples in the `example config`_ file.
 More details on experiments
 ---------------------------
 
-Let us consider the command from before in more detail:
+Let us consider the above command in more detail:
 
 .. code-block:: shell
 
-    $ smt run --config .example_config.yaml -X data/X_train.npy -a fit_transform
+    smt run --config .example_config.yaml -X data/X_train.npy -a fit_transform
 
 * :code:`smt` invokes sumatra_, which is an experiment tracking tool.
 
@@ -135,7 +137,7 @@ the fitted model from before:
 
 .. code-block:: shell
 
-    $ smt run --model data/20170810-131658/RandomSelection.pkl -X data/X_test.npy -a transform
+    smt run --model data/20170810-131658/RandomSelection.pkl -X data/X_test.npy -a transform
     >> Record label for this run: '20170810-134027'
     >> Data keys are [20170810-134027/X_new.npy(b33b0e0b794b64e5d284a602f5440620a21cac1c [2017-08-10 13:40:32])]
 
@@ -170,24 +172,26 @@ Code Submission
 It is required to publish your code shortly after the kaggle submission deadline
 (kaggle submission deadline + 24 hours).
 
-For this purpose, create and push a new branch with the same name as your kaggle name.
-Your kaggle name had to be set to your ETHZ/UZH email name token.
+For this purpose, create and push a new branch with the same name as your kaggle name followed by :code:`/ml-project-[project number]`; e.g. the branch name of your submission for the second project will be something like :code:`17-123-456/ml-project-2`.
+
+Your kaggle name has to be set to your student ID.
 
 ETHZ email: mmuster@student.ethz.ch
 
-name token: mmuster
+name token: 17-123-456
 
-name of branch: mmuster
+name of branch: 17-123-456/ml-project-2
 
-Before you push, make sure that your code quality is good. You can check by running
+Before you push, you have to make sure that your code passes the flake8 tests.
+You can check by running
 
 .. code-block:: shell
 
     flake8
-    
-in the ml-project folder. It will return a list of quality errors.
 
-Try to run it from the beginning, otherwise the list could get very long.
+in the ml-project folder. It will return a list of coding quality errors.
+
+Try to run it every now end then, otherwise the list of fixes you have to do before submission may get rather long.
 
 This repository runs an automatic quality check, when you push your branch.
 
