@@ -1,6 +1,7 @@
 """Setup script for ml-project"""
 import sys
 import subprocess
+from os.path import normpath
 
 
 def setup():
@@ -27,8 +28,9 @@ def setup():
             ".environment"])
 
     action(["bash", "-c", "source activate ml_project && "
-            "smt init -d ./data -i ./data -e python -m run.py "
-            "-c error -l cmdline ml_project"])
+            "smt init -d {datapath} -i {datapath} -e python -m run.py "
+            "-c store-diff -l cmdline ml_project".format(
+                datapath=normpath('./data'))])
 
     print("\n========================================================")
     print("Type 'source activate ml_project' to activate environment.")

@@ -1,5 +1,6 @@
 from sklearn.model_selection import GridSearchCV
 import pandas as pd
+from os.path import normpath
 
 
 class GridSearchCV(GridSearchCV):
@@ -21,4 +22,4 @@ class GridSearchCV(GridSearchCV):
             "std_test_score": self.cv_results_["std_test_score"],
         }
         df = pd.DataFrame.from_dict(pd.io.json.json_normalize(data))
-        df.to_csv(save_path+"GridSearchCV.csv")
+        df.to_csv(normpath(save_path+"GridSearchCV.csv"))
