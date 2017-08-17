@@ -29,7 +29,7 @@ def setup():
 
     action(["bash", "-c", "source activate ml_project && "
             "smt init -d {datapath} -i {datapath} -e python -m run.py "
-            "-c store-diff -l cmdline ml_project".format(
+            "-c error -l cmdline ml_project".format(
                 datapath=normpath('./data'))])
 
     print("\n========================================================")
