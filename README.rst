@@ -186,6 +186,7 @@ Try to run it every now end then, otherwise the list of fixes you have to do bef
 Next, create and push a new branch which is named :code:`legi-number/ml-project-1`, e.g.
 
 .. code-block:: shell
+
     git checkout -b 17-123-456/ml-project-1
     git push origin 17-123-456/ml-project-1
 
@@ -200,6 +201,17 @@ Results are only accepted, if the checks are positive and submission is before t
 
     Check under *Pipelines*, if your commit passed the check.
     The *latest* flag indicates which commit is the most current.
+
+Questions & Issues
+------------------
+
+.. _forum: www.piazza.com/ethz.ch/fall2017/252053500l
+
+Please post general questions about the machine learning projects to the dedicated
+Piazza forum_.
+
+For suggestions and problems specifically concerning the project framework, please
+open an issue on gitlab.
 
 More tools
 ----------
