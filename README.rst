@@ -25,7 +25,7 @@ The project descriptions and result submission are hosted by Kaggle:
 
 `ml-project-1`_
 
-
+ 
 .. contents::
 
 Getting Started (Non-Linux)
