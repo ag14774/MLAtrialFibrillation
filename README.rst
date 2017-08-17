@@ -171,6 +171,8 @@ saving outputs, you can simply run
 .. code-block:: shell
 
     python run.py [-h] [-c CONFIG] [-m MODEL] -X X [-y Y] -a {transform,predict,fit,fit_transform}
+    
+Use this for debugging only, otherwise your experiments remain untracked and unsaved!
 
 Code Submission
 ---------------
