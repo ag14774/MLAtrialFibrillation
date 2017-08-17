@@ -102,9 +102,9 @@ the transformed training data *X_new.npy*.
 To view the experiment record, type :code:`smtweb`:
 
 .. figure:: https://gmkr.io/s/5995a60a4d561e117a4be2c6/0
-   :scale: 50 %
+   :scale: 10 %
 
-    Example view of an experiment record.
+   Example view of an experiment record.
 
 This command will open a new window in your webbrowser, where you can explore
 the information stored about the example experiment.
