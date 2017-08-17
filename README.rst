@@ -21,7 +21,8 @@ during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
 * Convenient execution of machine learning models conforming to the scikit-learn_ pattern.
 * Structured & reproducible experiments by integration of sumatra_ and miniconda_.
 
-The project descriptions are hosted by Kaggle:
+The project descriptions and result submission are hosted by Kaggle:
+
 `ml-project-1`_
 
 Getting Started (Non-Linux)
