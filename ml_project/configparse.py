@@ -1,46 +1,58 @@
 """
-This modules allows to access the yaml config file as if
-it was a python module. The config is yaml since sumatra
-does not provide an easy and fast way to allow for
-python modules as parameter files.
+This modules allows to access the yaml config file
+as if it was a python module.
 """
 import importlib
 import importlib.util
 import os
 import yaml
-class Config:
+
+
+class ConfigParser:
     """ Wrapper class for the config.
     Before first use call parse_config_file
     or you will get an empty config object"""
     # Stores the parsed config
+
     config = {}
+
     @staticmethod
-    def parse_config_file(filename):
-        """ Read and parse yaml config file, initialized Config.config.
+    def parse_config(filename):
+        """ Read and parse yaml config file, initialized ConfigParser.config.
         Parses a yaml config file and returns a ConfigWrapper object
         with the attributes from the config file but with classes
         instead of strings as values.
         """
-        filename = os.path.expanduser(filename)
+        filename = os.path.normpath(os.path.expanduser(filename))
         with open(filename) as config_file:
             config_dict = yaml.load(config_file)
-        Config.import_python_classes(config_dict)
-        Config.config = config_dict
+        ConfigParser.import_python_classes(config_dict)
+        ConfigParser.config = config_dict
+
+        return config_dict
+
     @staticmethod
     def import_python_classes(obj):
         """ Replace 'module' and 'class' attributes with python objects """
         # Do the wrapper magic only if there is a 'module'
         # and a 'class' attribute(and obviously is dict)
         if isinstance(obj, dict):
-            if 'module' in obj and 'class' in obj:
+            # If 'module' in obj and 'class' in obj:
+            if key_contains("module", obj) and key_contains("class", obj):
                 # Assign obj['module'] to the python module
                 # instead of the string
-                obj['module'] = importlib.import_module(obj['module'])
+                module_key = get_full_key("module", obj)
+                class_key = get_full_key("class", obj)
+
+                obj[module_key] = importlib.import_module(obj[module_key])
                 # Assign obj['class'] to the python class instead of the string
-                obj['class'] = getattr(obj['module'], obj['class'])
-            # Import module from any file which not necessarily needs to be in a package
+                obj[class_key] = getattr(obj[module_key], obj[class_key])
+                obj.pop(module_key)
+            # Import module from any file which not necessarily needs to be in
+            # a package
             if 'import' in obj and 'class' in obj:
-                spec = importlib.util.spec_from_file_location(obj['class'], obj['import'])
+                spec = importlib.util.spec_from_file_location(obj['class'],
+                                                              obj['import'])
                 obj['import'] = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(obj['import'])
                 obj['class'] = getattr(obj['import'], obj['class'])
@@ -49,8 +61,21 @@ class Config:
             # Do the same thing for all other keys
             for key, value in obj.items():
                 if key != 'module' and key != 'class':
-                    Config.import_python_classes(value)
+                    ConfigParser.import_python_classes(value)
+
         # If the object is a list, continue the search for each item
         if isinstance(obj, list):
             for item in obj:
-                Config.import_python_classes(item)
+                ConfigParser.import_python_classes(item)
+
+
+def key_contains(string, dict):
+    for key in dict.keys():
+        if string in key:
+            return True
+
+
+def get_full_key(string, dict):
+    for key in dict.keys():
+        if string in key:
+            return key

@@ -1,0 +1,4 @@
+flake8:
+  stage: test
+  script:
+    - flake8

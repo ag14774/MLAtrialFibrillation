@@ -1,11 +1,13 @@
 dependencies:
   - python=3.5.3
   - numpy=1.13.0
-  - pip=9.0.1
   - scikit-learn=0.18.2
   - scipy=0.19.1
+  - pandas=0.20.3
   - gitpython
+  - flake8
+  - pip=9.0.1
   - pip:
-    - sumatra
+    - git+https://gitlab.vis.ethz.ch/vwegmayr/sumatra.git
     - pyyaml==3.12
-    - nibabel
+    - kaggle-cli

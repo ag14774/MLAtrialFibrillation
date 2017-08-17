@@ -2,3 +2,5 @@
 *.tar
 *.npy
 __pycache__/
+.kaggle-cli/
+data/
