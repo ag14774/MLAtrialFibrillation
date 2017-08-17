@@ -174,6 +174,10 @@ Furthermore, take advantage that sklearn is open source. Look at their code, it 
 This framework already implements an interface to the sklearn classes pipeline_
 and gridsearch_. Check out the `example config`_ to find out more about how to use them.
 
+The framework provides several placeholder files in models_, where you should implement your algorithms.
+Please do not create *any* new files. Our goal is to maintain the same structure for everybody to enable easy navigation.
+If you think something is missing or should be changed, please contact us via the Piazza forum_ or start an issue on gitlab.
+
 Debugging without Sumatra
 -------------------------
 
