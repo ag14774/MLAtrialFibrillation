@@ -99,7 +99,11 @@ Results can be found in timestamped directories :code:`data/YYYYMMDD-hhmmss`, i.
 It produced two outputs, first the fitted model *RandomSelection.pkl* and second
 the transformed training data *X_new.npy*.
 
-To view the experiment record, type :code:`smtweb`.
+To view the experiment record, type :code:`smtweb`:
+
+.. figure:: https://gmkr.io/s/5995a60a4d561e117a4be2c6/0
+
+    Example view of an experiment record.
 
 This command will open a new window in your webbrowser, where you can explore
 the information stored about the example experiment.
