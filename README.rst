@@ -172,11 +172,7 @@ Code Submission
 It is required to publish your code shortly after the kaggle submission deadline
 (kaggle submission deadline + 24 hours).
 
-For this purpose, create and push a new branch which is named :code:`legi-number/ml-project-1`, e.g. 17-123-456/ml-project-1.
-
-The first part has to be your Legi-Number, the number in the second part identifies the project.
-
-Before you push, you have to make sure that your code passes the flake8 tests.
+First, you have to make sure that your code passes the flake8 tests.
 You can check by running
 
 .. code-block:: shell
@@ -187,6 +183,14 @@ in the ml-project folder. It will return a list of coding quality errors.
 
 Try to run it every now end then, otherwise the list of fixes you have to do before submission may get rather long.
 
+Next, create and push a new branch which is named :code:`legi-number/ml-project-1`, e.g.
+
+.. code-block:: shell
+    git checkout -b 17-123-456/ml-project-1
+    git push origin 17-123-456/ml-project-1
+
+The first part has to be your Legi-Number, the number in the second part identifies the project.
+
 This repository runs an automatic quality check, when you push your branch.
 Additionally, the timestamp of the push is checked.
 
@@ -195,7 +199,7 @@ Results are only accepted, if the checks are positive and submission is before t
 .. figure:: https://gmkr.io/s/5995a0c7022cf3566f9c65c5/0
 
     Check under *Pipelines*, if your commit passed the check.
-    The *Latest* flag indicates which commit is the most current.
+    The *latest* flag indicates which commit is the most current.
 
 More tools
 ----------
