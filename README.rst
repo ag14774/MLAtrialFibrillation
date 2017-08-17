@@ -150,21 +150,17 @@ The project framework can handle sklearn-style classes that implement
 fit/fit_transform/transform/predict functions.
 
 Please implement your models as classes which conform with the sklearn pattern.
-With this common strucutre, you can easily read and reuse code created by others.
+With this common structure, you can easily read and reuse code created by others.
 
 In general, it is recommended to take advantage of the extensive functionality of the sklearn API.
 
 Make sure to read the sklearn-dev-guide_, especially the sections *Coding guidelines*,
 *APIs of scikit-learn objects*, and *Rolling your own estimator*.
 
-Furthermore, take advantage that sklearn is open source.
-
-Look at their code, it is very instructive!
+Furthermore, take advantage that sklearn is open source. Look at their code, it is very instructive!
 
 This framework already implements an interface to the sklearn classes pipeline_
-and gridsearch_.
-
-Check out the `example config`_ to find out more about how to use them.
+and gridsearch_. Check out the `example config`_ to find out more about how to use them.
 
 Code Submission
 ---------------
