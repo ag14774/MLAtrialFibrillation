@@ -6,16 +6,16 @@
 
 #Example 1
 #smt run --config .example_config.yaml -X data/X_train.npy -a fit_transform
-module: "ml_project.models.transformers"
-class: "RandomSelection"
+module: ml_project.models.feature_selection
+class: RandomSelection
 params:
   n_components: 1000
   random_state: 37
 
 #Example 2 (don't run it, might crash your machine)
 #smt run --config .example_config.yaml -X data/X_train.npy -y data/y_1.csv -a fit
-#module: "sklearn.linear_model"
-#class: "LinearRegression"
+#module: sklearn.linear_model
+#class: LinearRegression
 #params:
 #  normalize: True
 
@@ -25,7 +25,7 @@ params:
 #class: Pipeline
 #params:
 #  class_list:
-#    - module: ml_project.models.transformers
+#    - module: ml_project.models.feature_selection
 #      class: RandomSelection
 #      params:
 #        random_state: 37
@@ -41,7 +41,7 @@ params:
 #  est_module: ml_project.models.pipeline
 #  est_class: Pipeline
 #  est_params:
-#    - module: ml_project.models.transformers
+#    - module: ml_project.models.feature_selection
 #      class: RandomSelection
 #      params:
 #        random_state: 37
