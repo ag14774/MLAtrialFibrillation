@@ -192,7 +192,10 @@ Additionally, the timestamp of the push is checked.
 
 Results are only accepted, if the checks are positive and submission is before the deadline.
 
-.. image:: https://gmkr.io/s/59959efd99d3fc177ad28e9b/0
+.. figure:: https://gmkr.io/s/5995a0c7022cf3566f9c65c5/0
+
+    Check under *Pipelines*, if your commit passed the check.
+    The *Latest* flag indicates which commit is the most current.
 
 More tools
 ----------
