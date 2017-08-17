@@ -172,15 +172,9 @@ Code Submission
 It is required to publish your code shortly after the kaggle submission deadline
 (kaggle submission deadline + 24 hours).
 
-For this purpose, create and push a new branch with the same name as your kaggle name followed by :code:`/ml-project-[project number]`; e.g. the branch name of your submission for the second project will be something like :code:`17-123-456/ml-project-2`.
+For this purpose, create and push a new branch which is named :code:`legi-number/ml-project-1`, e.g. 17-123-456/ml-project-1.
 
-Your kaggle name has to be set to your student ID.
-
-ETHZ email: mmuster@student.ethz.ch
-
-name token: 17-123-456
-
-name of branch: 17-123-456/ml-project-2
+The first part has to be your Legi-Number, the number in the second part identifies the project.
 
 Before you push, you have to make sure that your code passes the flake8 tests.
 You can check by running
@@ -194,10 +188,11 @@ in the ml-project folder. It will return a list of coding quality errors.
 Try to run it every now end then, otherwise the list of fixes you have to do before submission may get rather long.
 
 This repository runs an automatic quality check, when you push your branch.
+Additionally, the timestamp of the push is checked.
 
-We accept only code that passes the check.
+Results are only accepted, if the checks are positive and submission is before the deadline.
 
-Additionally, we check the timestamp of the push to determine if the code was submitted duely.
+.. image:: https://gmkr.io/s/59959efd99d3fc177ad28e9b/0
 
 More tools
 ----------
