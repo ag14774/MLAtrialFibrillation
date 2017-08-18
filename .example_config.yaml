@@ -38,7 +38,7 @@ params:
 #module: ml_project.model_selection
 #class: GridSearchCV
 #params:
-#  est_module: ml_project.models.pipeline
+#  est_module: ml_project.pipeline
 #  est_class: Pipeline
 #  est_params:
 #    - module: ml_project.models.feature_selection
