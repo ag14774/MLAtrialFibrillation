@@ -156,8 +156,8 @@ if __name__ == '__main__':
 
     arg_parser = argparse.ArgumentParser(description="Scikit runner.")
 
-    arg_parser.add_argument("-c", "--config", help="config file")
-    arg_parser.add_argument("-m", "--model", help="model file")
+    arg_parser.add_argument("-C", "--config", help="config file")
+    arg_parser.add_argument("-M", "--model", help="model file")
 
     arg_parser.add_argument("-X", help="Input data", required=True)
     arg_parser.add_argument("-y", help="Input labels")
