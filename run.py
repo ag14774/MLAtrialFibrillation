@@ -145,13 +145,16 @@ class ModelAction(Action):
         self._y_new_set = True
 
     def _save(self):
+        y_path = normpath(self.save_path+"y_"+self.args.smt_label+".csv")
+        X_path = normpath(self.save_path+"X_new.npy")
+
         if self._X_new_set:
-            np.save(normpath(self.save_path+"X_new.npy"), self.X_new)
+            np.save(X_path, self.X_new)
         if self._y_new_set:
             df = pd.DataFrame({"Prediction": self.y_new})
             df.index += 1
             df.index.name = "ID"
-            df.to_csv(normpath(self.save_path+"y_"+self.args.smt_label+".csv"))
+            df.to_csv(y_path)
 
     def _load_model(self):
         return joblib.load(self.args.model)
