@@ -46,9 +46,19 @@ class Action(ABC):
             self._save()
 
     def _load_data(self):
-        X = np.load(self.args.X)
+        try:
+            X = np.load(self.args.X)
+        except FileNotFoundError:
+            print("{} not found. "
+                  "Please download data first.".format(self.args.X))
+            exit()
         if self.args.y is not None:
-            y = np.loadtxt(self.args.y)
+            try:
+                y = np.loadtxt(self.args.y)
+            except FileNotFoundError:
+                print("{} not found. "
+                      "Please download data first.".format(self.args.y))
+                exit()
         else:
             y = None
         return X, y
