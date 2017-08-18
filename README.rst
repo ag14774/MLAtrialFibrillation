@@ -211,6 +211,12 @@ in the ml-project folder. It will return a list of coding quality errors.
 
 Try to run it every now end then, otherwise the list of fixes you have to do before submission may get rather long.
 
+Make sure that your Sumatra records are added:
+
+.. code-block:: shell
+
+    git add .smt/
+
 Next, create and push a new branch which is named :code:`legi-number/ml-project-1`, e.g.
 
 .. code-block:: shell
