@@ -46,9 +46,19 @@ class Action(ABC):
             self._save()
 
     def _load_data(self):
-        X = np.load(self.args.X)
+        try:
+            X = np.load(self.args.X)
+        except FileNotFoundError:
+            print("{} not found. "
+                  "Please download data first.".format(self.args.X))
+            exit()
         if self.args.y is not None:
-            y = np.loadtxt(self.args.y)
+            try:
+                y = np.loadtxt(self.args.y)
+            except FileNotFoundError:
+                print("{} not found. "
+                      "Please download data first.".format(self.args.y))
+                exit()
         else:
             y = None
         return X, y
@@ -156,8 +166,8 @@ if __name__ == '__main__':
 
     arg_parser = argparse.ArgumentParser(description="Scikit runner.")
 
-    arg_parser.add_argument("-c", "--config", help="config file")
-    arg_parser.add_argument("-m", "--model", help="model file")
+    arg_parser.add_argument("-C", "--config", help="config file")
+    arg_parser.add_argument("-M", "--model", help="model file")
 
     arg_parser.add_argument("-X", help="Input data", required=True)
     arg_parser.add_argument("-y", help="Input labels")
