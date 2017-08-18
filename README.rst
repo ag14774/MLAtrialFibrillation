@@ -41,13 +41,11 @@ Make sure you allocate sufficient RAM (>= 8GB) and disk space (>= 64GB) for the 
 If you can not choose 64-bit Ubuntu in VirtualBox, you might have to enable
 virtualization in your BIOS.
 
-Once your VM is running, you only need to install git:
+Once your VM is running, open a terminal and install git:
 
 .. code-block:: shell
 
     sudo aptitude install git
-
-(Code blocks in this README show Unix shell commands.)
 
 After that, please continue with Getting Started for Linux.
 
