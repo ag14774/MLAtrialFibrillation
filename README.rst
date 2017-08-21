@@ -52,7 +52,8 @@ After that, please continue with Getting Started for Linux.
 Getting Started (Linux)
 -----------------------
 
-First you need to install miniconda_ on your system.
+First you need to install miniconda_ on your system. If you already have Anaconda
+installed you can skip this step.
 
 Having installed miniconda, clone the repository and run the setup script:
 
