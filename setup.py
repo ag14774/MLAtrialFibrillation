@@ -32,6 +32,8 @@ def setup():
             "-c error -l cmdline ml_project".format(
                 datapath=normpath('./data'))])
 
+    action(["cp", ".example_config.yaml", ".config.yaml"])
+
     print("\n========================================================")
     print("Type 'source activate ml_project' to activate environment.")
     print("==========================================================")

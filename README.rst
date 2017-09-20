@@ -88,7 +88,7 @@ To run an example experiment, simply type
 
 .. code-block:: shell
 
-    smt run --config .example_config.yaml -X data/X_train.npy -a fit_transform
+    smt run --config .config.yaml -X data/X_train.npy -a fit_transform
 
     >> =========== Config ===========
     >> {'class': <class 'ml_project.models.transformers.RandomSelection'>,
@@ -129,7 +129,7 @@ Let us consider the above command in more detail:
 
 .. code-block:: shell
 
-    smt run --config .example_config.yaml -X data/X_train.npy -a fit_transform
+    smt run --config .config.yaml -X data/X_train.npy -a fit_transform
 
 * :code:`smt` invokes sumatra_, which is an experiment tracking tool.
 
