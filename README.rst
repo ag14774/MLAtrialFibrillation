@@ -76,7 +76,7 @@ A simple way to download the data is with the kaggle-cli_ tool:
     cd data/
     kg download -c ml-project-1 -u username -p password
     
-Replace `username` with your Kaggle Username and `password` with your Kaggle password.
+Replace :code:`username` with your Kaggle Username and :code:`password` with your Kaggle password.
 
 Running an example experiment
 -----------------------------
