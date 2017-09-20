@@ -247,10 +247,11 @@ Please post general questions about the machine learning projects to the dedicat
 Piazza forum_.
 
 For suggestions and problems specifically concerning the project framework, please
-open an issue on gitlab.
+open an issue here on gitlab.
 
 More tools
 ----------
 
 A very convenient tool included in the ml-project framework is kaggle-cli_.
 It can be used to submit predictions to kaggle and to view previous submissions.
+You can even download the project data with it.
