@@ -1,0 +1,54 @@
+#Examples of config settings
+#===========================
+#Uncomment the example that you want to run
+#Leave the first two lines of the example commented, though
+#The second line of each example provides the command for the terminal
+
+#Example 1
+#smt run --config .config.yaml -X data/X_train.npy -a fit_transform
+#module: ml_project.models.feature_selection
+class: RandomSelection
+params:
+  n_components: 1000
+  random_state: 37
+
+#Example 2 (don't run it, might crash your machine)
+#smt run --config .config.yaml -X data/X_train.npy -y data/y_1.csv -a fit
+#module: sklearn.linear_model
+#class: LinearRegression
+#params:
+#  normalize: True
+
+#Example 3
+#smt run --config .config.yaml -X data/X_train.npy -y data/y_1.csv -a fit
+#module: ml_project.pipeline
+#class: Pipeline
+#params:
+#  class_list:
+#    - module: ml_project.models.feature_selection
+#      class: RandomSelection
+#      params:
+#        random_state: 37
+#        n_components: 1000
+#    - module: sklearn.linear_model
+#      class: LinearRegression
+
+#Example 4
+#smt run --config .config.yaml -X data/X_train.npy -y data/y_1.csv -a fit
+#module: ml_project.model_selection
+#class: GridSearchCV
+#params:
+#  est_module: ml_project.pipeline
+#  est_class: Pipeline
+#  est_params:
+#    - module: ml_project.models.feature_selection
+#      class: RandomSelection
+#      params:
+#        random_state: 37
+#    - module: sklearn.linear_model
+#      class: LinearRegression
+#  param_grid:
+#    RandomSelection__n_components:
+#      - 100
+#      - 1000
+#      - 10000
