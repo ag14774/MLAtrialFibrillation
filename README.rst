@@ -164,13 +164,13 @@ Writing your own models
 
 .. _models: ml_project/models
 
-The project framework can handle sklearn-style classes that implement
+The project framework handles sklearn-style classes that implement
 fit/fit_transform/transform/predict functions.
 
-Please implement your models as classes which conform with the sklearn pattern.
-With this common structure, you can easily read and reuse code created by others.
+It makes it easier for you to implement your models as classes which conform with the sklearn class pattern.
+With this common structure, you can easily read and reuse code created by other students.
 
-In general, it is recommended to take advantage of the extensive functionality of the sklearn API.
+In general, it is recommended to take advantage of the extensive functionality of the sklearn framework.
 
 Make sure to read the sklearn-dev-guide_, especially the sections *Coding guidelines*,
 *APIs of scikit-learn objects*, and *Rolling your own estimator*.
@@ -180,7 +180,7 @@ Furthermore, take advantage that sklearn is open source. Look at their code, it 
 This framework already implements an interface to the sklearn classes pipeline_
 and gridsearch_. Check out the `example config`_ to find out more about how to use them.
 
-The framework provides several placeholder files in models_, where you should implement your algorithms.
+Furthermore, the framework provides several placeholder files in models_, where you should implement your algorithms.
 
 It contains two simple examples already, KernelEstimator in regression_ and RandomSelection in `feature selection`_.
 
