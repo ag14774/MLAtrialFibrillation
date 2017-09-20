@@ -15,6 +15,8 @@ ETH Machine Learning Projects
 .. _kaggle: https://inclass.kaggle.com/c/ml-project-1
 .. _`Kaggle Project 1`: https://inclass.kaggle.com/c/ml-project-1
 .. _runner: run.py
+.. _regression: ml_project/models/regression.py
+.. _`feature selection`: ml_project/models/feature_selection.py
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -180,7 +182,9 @@ and gridsearch_. Check out the `example config`_ to find out more about how to u
 
 The framework provides several placeholder files in models_, where you should implement your algorithms.
 
-Please do not create *any* new files. Our goal is to maintain the same structure for everybody to enable easy navigation.
+It contains two simple examples already, KernelEstimator in regression_ and RandomSelection in `feature selection`_.
+
+Please do not create *any* new model files. Our goal is to maintain the same structure for everybody to enable easy navigation.
 
 If you think something is missing or should be changed, please contact us via the Piazza forum_ or start an issue on gitlab.
 
