@@ -13,7 +13,7 @@ ETH Machine Learning Projects
 .. _data: data/
 .. _kaggle-cli: https://github.com/floydwch/kaggle-cli
 .. _kaggle: https://inclass.kaggle.com/c/ml-project-1
-.. _`ml-project-1`: https://inclass.kaggle.com/c/ml-project-1
+.. _`Kaggle Project 1`: https://inclass.kaggle.com/c/ml-project-1
 .. _runner: run.py
 
 This repository contains the framework for the practical projects offered
@@ -24,7 +24,7 @@ during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
 
 The project descriptions and result submission are hosted by Kaggle:
 
-- `ml-project-1`_
+- `Kaggle Project 1`_
 
 .. contents::
 
