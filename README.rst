@@ -212,6 +212,14 @@ saving outputs, you can simply run
     
 Use this for debugging only, otherwise your experiments remain untracked and unsaved!
 
+Submission
+==========
+
+Result Submission
+-----------------
+
+blabla
+
 Code Submission
 ---------------
 
