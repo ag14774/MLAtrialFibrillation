@@ -254,4 +254,5 @@ More tools
 
 A very convenient tool included in the ml-project framework is kaggle-cli_.
 It can be used to submit predictions to kaggle and to view previous submissions.
+
 You can even download the project data with it.
