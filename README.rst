@@ -66,8 +66,17 @@ Having installed miniconda, clone the repository and run the setup script:
     cd ml-project
     python setup.py
 
-Make sure you have downloaded the data to the data_ folder, either by using the
-kaggle-cli_ tool or from the kaggle_ homepage.
+Get the data
+------------
+
+A simple way to download the data is with the kaggle-cli_ tool:
+
+.. code-block:: shell
+    
+    cd data/
+    kg download -c ml-project-1 -u username -p password
+    
+Replace `username` with your Kaggle Username and `password` with your Kaggle password.
 
 Running an example experiment
 -----------------------------
@@ -83,6 +92,9 @@ If you encounter problems with site-packages try:
 .. code-block:: shell
 
     export PYTHONNOUSERSITE=True; source activate ml_project
+
+Make sure you have downloaded the data to the data_ folder, either by using the
+kaggle-cli_ tool or from the kaggle_ homepage.
 
 To run an example experiment, simply type
 
