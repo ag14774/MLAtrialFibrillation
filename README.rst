@@ -14,6 +14,7 @@ ETH Machine Learning Projects
 .. _kaggle-cli: https://github.com/floydwch/kaggle-cli
 .. _kaggle: https://inclass.kaggle.com/c/ml-project-1
 .. _`ml-project-1`: https://inclass.kaggle.com/c/ml-project-1
+.. _runner: run.py
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -130,7 +131,7 @@ Let us consider the above command in more detail:
 
 * :code:`smt` invokes sumatra_, which is an experiment tracking tool.
 
-* :code:`run` tells sumatra_ to execute the experiment runner.
+* :code:`run` tells sumatra_ to execute the experiment runner_.
 
 * :code:`--config` points to the paramter file for this experiment.
 
