@@ -141,7 +141,7 @@ Let us consider the above command in more detail:
 
 In addition to :code:`--config` experiments, you can run :code:`--model` experiments.
 
-These two cover fit/fit_transform and transform/predict, respectively.
+These two flags cover fit/fit_transform and transform/predict, respectively.
 
 The reason is that for fit/fit_tranform you typically require parameters, whereas
 for transform/predict you start from a fitted model.
