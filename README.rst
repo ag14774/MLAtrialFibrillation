@@ -137,7 +137,7 @@ Let us consider the above command in more detail:
 
 * :code:`-X` points to the input data
 
-* :code:`-a` tells the runner which action to perform.
+* :code:`-a` tells the runner_ which action to perform.
 
 In addition to :code:`--config` experiments, you can run :code:`--model` experiments.
 
