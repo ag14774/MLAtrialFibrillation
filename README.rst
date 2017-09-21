@@ -26,6 +26,18 @@ during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
 1. Convenient execution of machine learning models conforming with the scikit-learn_ pattern.
 2. Structured & reproducible experiments by integration of sumatra_ and miniconda_.
 
+
+The project description and result submission are hosted by Kaggle:
+
+- `Kaggle Project 1`_
+
+
+.. contents::
+
+
+Purpose
+=======
+
 Many brilliant implementations will be created during the projects, so wouldn't it be great to learn from them?
 
 But have you ever tried to read the code of somebody else? If you just shuddered, you know what we are talking about.
@@ -46,17 +58,11 @@ Ok, know we understand the code and the experiment setup. So let's run their cod
 
 Sounds familiar? Don't worry, miniconda_ is a central part of the framework, which provides your code an isolated, functional environment to run.
 
-The project description and result submission are hosted by Kaggle:
-
-- `Kaggle Project 1`_
-
-.. contents::
-
 Getting Started
 ===============
 
 Get Started (Non-Linux)
----------------------------
+-----------------------
 
 The project framework has been tested in Linux (Ubuntu) environments only. If you
 are using Linux already, you can skip forward to Getting Started for Linux.
@@ -78,7 +84,7 @@ Once your VM is running, open a terminal and install git:
 After that, please continue with Getting Started for Linux.
 
 Get Started (Linux)
------------------------
+-------------------
 
 First you need to install miniconda_ on your system. If you already have Anaconda
 installed you can skip this step.
