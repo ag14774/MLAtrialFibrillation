@@ -44,7 +44,7 @@ But have you ever tried to read the code of somebody else? If you just shuddered
 
 We want to take this pain away (or most of it). This framework aims to enable every student to write their code in the same way.
 
-So when you go to another work, you know what stucture to expect, and you can instantly start to navigate through it.
+So when you go to another work, you know what structure to expect, and you can instantly start to navigate through it.
 
 For this purpose, we provide a common file structure and an interface to the scikit-learn_ framework. It offers standardized base classes to derive your solutions from.
 
