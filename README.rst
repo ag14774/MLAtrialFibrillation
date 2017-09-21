@@ -52,7 +52,7 @@ But to understand a great result, we need more than the code, that produced it. 
 
 For this reason, we have included sumatra_ in the framework. It allows you to track, organize and search your experiments.
 
-Ok, know we understand the code and the experiment setup. So let's run their code!
+Ok, now we understand the code and the experiment setup. So let's run their code!
 
 *ImportError: No module named fancymodule*
 
