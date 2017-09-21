@@ -1,3 +1,4 @@
+=============================
 ETH Machine Learning Projects
 =============================
 
@@ -30,7 +31,10 @@ The project description and result submission are hosted by Kaggle:
 
 .. contents::
 
-Getting Started (Non-Linux)
+Getting Started
+===============
+
+Get Started (Non-Linux)
 ---------------------------
 
 The project framework has been tested in Linux (Ubuntu) environments only. If you
@@ -52,7 +56,7 @@ Once your VM is running, open a terminal and install git:
 
 After that, please continue with Getting Started for Linux.
 
-Getting Started (Linux)
+Get Started (Linux)
 -----------------------
 
 First you need to install miniconda_ on your system. If you already have Anaconda
@@ -77,6 +81,9 @@ A simple way to download the data is with the kaggle-cli_ tool:
     kg download -c ml-project-1 -u username -p password
     
 Replace :code:`username` with your Kaggle Username and :code:`password` with your Kaggle password.
+
+Experiments
+===========
 
 Running an example experiment
 -----------------------------
@@ -262,8 +269,9 @@ Results are only accepted, if the checks are positive and submission is before t
     Check under *Pipelines*, if your commit passed the check.
     The *latest* flag indicates which commit is the most current.
 
+
 Questions & Issues
-------------------
+==================
 
 .. _forum: www.piazza.com/ethz.ch/fall2017/252053500l
 
@@ -272,11 +280,3 @@ Piazza forum_.
 
 For suggestions and problems specifically concerning the project framework, please
 open an issue here on gitlab.
-
-More tools
-----------
-
-A very convenient tool included in the ml-project framework is kaggle-cli_.
-It can be used to submit predictions to kaggle and to view previous submissions.
-
-You can even download the project data with it.
