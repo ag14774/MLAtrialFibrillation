@@ -82,6 +82,7 @@ class ConfigAction(Action):
 
     """
     def __init__(self, args, config):
+        self._check_action(args.action)
         super(ConfigAction, self).__init__(args)
         self.config = config
         self.pprint_config()
@@ -132,8 +133,8 @@ class ModelAction(Action):
         args (Namespace): Parsed arguments
     """
     def __init__(self, args):
-        super(ModelAction, self).__init__(args)
         self._check_action(args.action)
+        super(ModelAction, self).__init__(args)
         self.act()
 
     def transform(self):
