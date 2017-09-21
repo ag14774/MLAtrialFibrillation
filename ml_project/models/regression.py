@@ -5,7 +5,7 @@ from sklearn.utils.validation import check_X_y, check_array, check_is_fitted
 
 class KernelEstimator(skl.base.BaseEstimator, skl.base.TransformerMixin):
     """docstring"""
-    def __init__(self, arg):
+    def __init__(self):
         super(KernelEstimator, self).__init__()
 
     def fit(self, X, y):
