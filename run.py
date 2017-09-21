@@ -20,9 +20,9 @@ class Action(ABC):
         args (Namespace): Parsed arguments
     """
     def __init__(self, args):
-        self._check_action(self.args.action)
-        self.X, self.y = self._load_data()
         self.args = args
+        self._check_action(args.action)
+        self.X, self.y = self._load_data()
         self.save_path = self._mk_save_folder()
         self.X_new, self.y_new = None, None
         self._X_new_set, self._y_new_set = False, False
