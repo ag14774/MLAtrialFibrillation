@@ -222,11 +222,6 @@ Use this for debugging only, otherwise your experiments remain untracked and uns
 Submission
 ==========
 
-Result Submission
------------------
-
-blabla
-
 Code Submission
 ---------------
 
@@ -269,6 +264,31 @@ Results are only accepted, if the checks are positive and submission is before t
     Check under *Pipelines*, if your commit passed the check.
     The *latest* flag indicates which commit is the most current.
 
+Result Submission
+-----------------
+
+To submit a prediction (y_YYMMDD-hhmmss.csv), e.g. to get the validation score, you can use
+the kaggle-cli_ tool:
+
+.. code-block:: shell
+
+    kg submit data/YYMMDD-hhmmss/y_YYMMDD-hhmmss.csv -c ml-project-1 -u username -p password -m "Brief description"
+    
+To view your submissions, just type
+
+.. code-block:: shell
+
+    kg submissions
+    
+which will list all your previous submissions. To set a default username, password and project:
+
+.. code-block:: shell
+
+    kg config -u username -p password -c competition
+    
+Please note, you have to explicitly select your final submission on Kaggle (`here <https://inclass.kaggle.com/c/ml-project-1/submissions>`_).
+
+Otherwise, Kaggle will automatically select the submission with the best validation score.
 
 Questions & Issues
 ==================
@@ -280,3 +300,5 @@ Piazza forum_.
 
 For suggestions and problems specifically concerning the project framework, please
 open an issue here on gitlab.
+
+If you want to discuss a problem in person, we will offer a weekly project office hour (tbd).
