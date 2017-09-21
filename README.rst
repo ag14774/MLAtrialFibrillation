@@ -19,6 +19,7 @@ ETH Machine Learning Projects
 .. _regression: ml_project/models/regression.py
 .. _`feature selection`: ml_project/models/feature_selection.py
 .. _models: ml_project/models
+.. _.environment: .environment
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -208,27 +209,20 @@ Again, sumatra_ created an experiment record, which you can use to track input/o
 Writing your own models
 -----------------------
 
-The project framework handles sklearn-style classes that implement
-fit/fit_transform/transform/predict functions.
+Derive your models from sklearn base classes and implement the fit/fit_transform/transform/predict functions. 
 
-It makes it easier for you to implement your models as classes which conform with the sklearn class pattern.
-With this common structure, you can easily read and reuse code created by other students.
+We have provided several placeholder modules in models_, where you can put the code. Two simple examples are already included, KernelEstimator in regression_ and RandomSelection in `feature selection`_.
 
-In general, it is recommended to take advantage of the extensive functionality of the sklearn framework.
+Please do not create *any* new model files or other files or folders, as we want to preserve the common structure.
+
+To make experimenting easier, we provide an interface to the sklearn classes pipeline_ and gridsearch_. Check out the example config_ to find out more about how to use them.
 
 Make sure to read the sklearn-dev-guide_, especially the sections *Coding guidelines*,
 *APIs of scikit-learn objects*, and *Rolling your own estimator*.
 
-Furthermore, take advantage that sklearn is open source. Look at their code, it is very instructive!
+Furthermore, try to look at the sklearn source code - it is very instructive. You will spot many more of the sklearn utilities!
 
-This framework already implements an interface to the sklearn classes pipeline_
-and gridsearch_. Check out the `example config`_ to find out more about how to use them.
-
-Furthermore, the framework provides several placeholder files in models_, where you should implement your algorithms.
-
-It contains two simple examples already, KernelEstimator in regression_ and RandomSelection in `feature selection`_.
-
-Please do not create *any* new model files. Our goal is to maintain the same structure for everybody to enable easy navigation.
+If you add new packages to your code, please include them in the .environment_ file, so that it is available when other people build your environment.
 
 If you think something is missing or should be changed, please contact us via the Piazza forum_ or start an issue on gitlab.
 
