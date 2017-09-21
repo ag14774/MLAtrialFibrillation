@@ -34,23 +34,17 @@ We want to take this pain away (or most of it). This framework aims to enable ev
 
 So when you go to another work, you know what stucture to expect, and you can instantly start to navigate through it.
 
-For this purpose, we provide a common file structure and an interface to the scikit-learn_ framework.
+For this purpose, we provide a common file structure and an interface to the scikit-learn_ framework. It offers standardized base classes to derive your solutions from.
 
-It offers standardized base classes to derive your solutions from.
+But to understand a great result, we need more than the code, that produced it. Which data was used as input? How was it processed? What parameters were used?
 
-But to understand a great result, we need more than the code, that produced it.
-
-Which data was used as input? How was it processed? What parameters were used?
-
-For this reason, we have included sumatra_ in the framework.
-
-It allows you to track, organize and search your experiments.
+For this reason, we have included sumatra_ in the framework. It allows you to track, organize and search your experiments.
 
 Ok, know we understand the code and the experiment setup. So let's run their code!
 
-*ImportError: No module named fancymodule* Sounds familiar?
+*ImportError: No module named fancymodule*
 
-Don't worry, miniconda_ is a central part of the framework, which provides your code an isolated, functional environment to run.
+Sounds familiar? Don't worry, miniconda_ is a central part of the framework, which provides your code an isolated, functional environment to run.
 
 The project description and result submission are hosted by Kaggle:
 
