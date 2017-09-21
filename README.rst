@@ -18,12 +18,39 @@ ETH Machine Learning Projects
 .. _runner: run.py
 .. _regression: ml_project/models/regression.py
 .. _`feature selection`: ml_project/models/feature_selection.py
+.. _models: ml_project/models
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
 
 1. Convenient execution of machine learning models conforming with the scikit-learn_ pattern.
 2. Structured & reproducible experiments by integration of sumatra_ and miniconda_.
+
+Many brilliant implementations will be created during the projects, so wouldn't it be great to learn from them?
+
+But have you ever tried to read the code of somebody else? If you just shuddered, you know what we are talking about.
+
+We want to take this pain away (or most of it). This framework aims to enable every student to write their code in the same way.
+
+So when you go to another work, you know what stucture to expect, and you can instantly start to navigate through it.
+
+For this purpose, we provide a common file structure and an interface to the scikit-learn_ framework.
+
+It offers standardized base classes to derive your solutions from.
+
+But to understand a great result, we need more than the code, that produced it.
+
+Which data was used as input? How was it processed? What parameters were used?
+
+For this reason, we have included sumatra_ in the framework.
+
+It allows you to track, organize and search your experiments.
+
+Ok, know we understand the code and the experiment setup. So let's run their code!
+
+*ImportError: No module named fancymodule* Sounds familiar?
+
+Don't worry, miniconda_ is a central part of the framework, which provides your code an isolated, functional environment to run.
 
 The project description and result submission are hosted by Kaggle:
 
@@ -180,8 +207,6 @@ Again, sumatra_ created an experiment record, which you can use to track input/o
 
 Writing your own models
 -----------------------
-
-.. _models: ml_project/models
 
 The project framework handles sklearn-style classes that implement
 fit/fit_transform/transform/predict functions.
