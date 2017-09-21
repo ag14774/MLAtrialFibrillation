@@ -209,7 +209,9 @@ Again, sumatra_ created an experiment record, which you can use to track input/o
 Writing your own models
 -----------------------
 
-Derive your models from sklearn base classes and implement the fit/fit_transform/transform/predict functions. 
+Derive your models from sklearn base classes and implement the fit/fit_transform/transform/predict functions. For this project, these functions should cover all you ever need to implement.
+
+For instance, if you want to implement smoothing as a precprocessing step, it clearly matched the fit_transform/transform pattern.
 
 We have provided several placeholder modules in models_, where you can put the code. Two simple examples are already included, KernelEstimator in regression_ and RandomSelection in `feature selection`_.
 
