@@ -3,8 +3,9 @@ from sklearn.pipeline import Pipeline
 
 class Pipeline(Pipeline):
     """docstring for Pipeline"""
-    def __init__(self, class_list):
+    def __init__(self, class_list, save_path=None):
         self.class_list = class_list
+        self.save_path = save_path
         self.steps = self.load_steps(class_list)
         super(Pipeline, self).__init__(self.steps)
 
@@ -18,3 +19,6 @@ class Pipeline(Pipeline):
             else:
                 steps.append((name, dict_["class"]()))
         return steps
+
+    def save(self, save_path):
+        pass

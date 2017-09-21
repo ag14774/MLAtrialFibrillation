@@ -93,6 +93,7 @@ class ConfigAction(Action):
     def transform(self):
         self.X_new = self.model.transform(self.X, self.y)
         self._X_new_set = True
+        self.new = "new"
 
     def fit_transform(self):
         self.fit()
@@ -111,7 +112,11 @@ class ConfigAction(Action):
             self.model.save(self.save_path)
 
     def _load_model(self):
-        return self.config["class"](**self.config["params"])
+        if hasattr(self.config["class"], "save_path"):
+            model = self.config["class"](**self.config["params"], save_path=save_path)
+        else:
+            model = self.config["class"](**self.config["params"])
+        return model
 
     def _check_action(self, action):
         if action not in ["fit", "fit_transform"]:
@@ -143,6 +148,9 @@ class ModelAction(Action):
         self.y_new = self.model.predict(self.X)
         self._y_new_set = True
 
+    def score(self):
+        self.model.score(self.X, self.y)
+
     def _save(self):
         y_path = normpath(self.save_path+"y_"+self.args.smt_label+".csv")
         X_path = normpath(self.save_path+"X_new.npy")
@@ -156,11 +164,14 @@ class ModelAction(Action):
             df.to_csv(y_path)
 
     def _load_model(self):
-        return joblib.load(self.args.model)
+        model = joblib.load(self.args.model)
+        if hasattr(model, "save_path"):
+            model.save_path = self.save_path
+        return model
 
     def _check_action(self, action):
-        if action not in ["transform", "predict"]:
-            raise RuntimeError("Can only run transform or predict from model,"
+        if action not in ["transform", "predict", "score"]:
+            raise RuntimeError("Can only run transform, predict or score from model,"
                                " got {}.".format(action))
 
 
