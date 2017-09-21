@@ -19,7 +19,7 @@ ETH Machine Learning Projects
 .. _regression: ml_project/models/regression.py
 .. _`feature selection`: ml_project/models/feature_selection.py
 .. _models: ml_project/models
-.. _.environment: .environment
+.. _`.environment`: .environment
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -215,14 +215,14 @@ We have provided several placeholder modules in models_, where you can put the c
 
 Please do not create *any* new model files or other files or folders, as we want to preserve the common structure.
 
-To make experimenting easier, we provide an interface to the sklearn classes pipeline_ and gridsearch_. Check out the example config_ to find out more about how to use them.
+To make experimenting easier, we provide an interface to the sklearn classes pipeline_ and gridsearch_. Check out the `example config`_ to find out more about how to use them.
 
 Make sure to read the sklearn-dev-guide_, especially the sections *Coding guidelines*,
 *APIs of scikit-learn objects*, and *Rolling your own estimator*.
 
 Furthermore, try to look at the sklearn source code - it is very instructive. You will spot many more of the sklearn utilities!
 
-If you add new packages to your code, please include them in the .environment_ file, so that it is available when other people build your environment.
+If you add new packages to your code, please include them in the `.environment`_ file, so that it is available when other people build your environment.
 
 If you think something is missing or should be changed, please contact us via the Piazza forum_ or start an issue on gitlab.
 
