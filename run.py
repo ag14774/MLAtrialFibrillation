@@ -20,9 +20,10 @@ class Action(ABC):
         args (Namespace): Parsed arguments
     """
     def __init__(self, args):
+        self._check_action(self.args.action)
+        self.X, self.y = self._load_data()
         self.args = args
         self.save_path = self._mk_save_folder()
-        self.X, self.y = self._load_data()
         self.X_new, self.y_new = None, None
         self._X_new_set, self._y_new_set = False, False
 
@@ -39,7 +40,6 @@ class Action(ABC):
         pass
 
     def act(self):
-        self._check_action(self.args.action)
         self.model = self._load_model()
         getattr(self, self.args.action)()
         if self.args.smt_label != "debug":
@@ -82,7 +82,6 @@ class ConfigAction(Action):
 
     """
     def __init__(self, args, config):
-        self._check_action(args.action)
         super(ConfigAction, self).__init__(args)
         self.config = config
         self.pprint_config()
@@ -133,7 +132,6 @@ class ModelAction(Action):
         args (Namespace): Parsed arguments
     """
     def __init__(self, args):
-        self._check_action(args.action)
         super(ModelAction, self).__init__(args)
         self.act()
 
