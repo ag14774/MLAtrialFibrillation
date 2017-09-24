@@ -12,12 +12,10 @@ params:
   n_components: 1000
   random_state: 37
 
-#Example 2 (don't run it, might crash your machine)
+#Example 2
 #smt run --config .config.yaml -X data/X_train.npy -y data/y_1.csv -a fit
-#module: sklearn.linear_model
-#class: LinearRegression
-#params:
-#  normalize: True
+#module: ml_project.models.regression
+#class: KernelEstimator
 
 #Example 3
 #smt run --config .config.yaml -X data/X_train.npy -y data/y_1.csv -a fit
@@ -52,3 +50,10 @@ params:
 #      - 100
 #      - 1000
 #      - 10000
+#  cv:
+#    module: sklearn.model_selection
+#    class: KFold
+#    params:
+#      n_splits: 3
+#      shuffle: True
+#      random_state: 37
