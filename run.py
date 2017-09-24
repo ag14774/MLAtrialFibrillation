@@ -93,7 +93,6 @@ class ConfigAction(Action):
     def transform(self):
         self.X_new = self.model.transform(self.X, self.y)
         self._X_new_set = True
-        self.new = "new"
 
     def fit_transform(self):
         self.fit()
@@ -108,12 +107,10 @@ class ConfigAction(Action):
             path = self.save_path+"X_new.npy"
             np.save(normpath(path), self.X_new)
 
-        if hasattr(self.config["class"], "save"):
-            self.model.save(self.save_path)
-
     def _load_model(self):
-        if hasattr(self.config["class"], "save_path"):
-            model = self.config["class"](**self.config["params"], save_path=save_path)
+        model = self.config["class"](**self.config["params"])
+        if hasattr(model, "set_save_path"):
+            model.set_save_path(self.save_path)
         else:
             model = self.config["class"](**self.config["params"])
         return model
@@ -165,14 +162,14 @@ class ModelAction(Action):
 
     def _load_model(self):
         model = joblib.load(self.args.model)
-        if hasattr(model, "save_path"):
-            model.save_path = self.save_path
+        if hasattr(model, "set_save_path"):
+            model.set_save_path(self.save_path)
         return model
 
     def _check_action(self, action):
         if action not in ["transform", "predict", "score"]:
-            raise RuntimeError("Can only run transform, predict or score from model,"
-                               " got {}.".format(action))
+            raise RuntimeError("Can only run transform, predict or score from"
+                               "model, got {}.".format(action))
 
 
 if __name__ == '__main__':
@@ -186,7 +183,8 @@ if __name__ == '__main__':
     arg_parser.add_argument("-y", help="Input labels")
 
     arg_parser.add_argument("-a", "--action", choices=["transform", "predict",
-                            "fit", "fit_transform"], help="Action to perform.",
+                            "fit", "fit_transform", "score"],
+                            help="Action to perform.",
                             required=True)
 
     arg_parser.add_argument("smt_label", nargs="?", default="debug")
