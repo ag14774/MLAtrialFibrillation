@@ -108,11 +108,16 @@ class ConfigAction(Action):
             np.save(normpath(path), self.X_new)
 
     def _load_model(self):
-        model = self.config["class"](**self.config["params"])
+        if "params" in self.config:
+            model = self.config["class"](**self.config["params"])
+        else:
+            model = self.config["class"]()
+
         if hasattr(model, "set_save_path"):
             model.set_save_path(self.save_path)
         else:
             model = self.config["class"](**self.config["params"])
+            
         return model
 
     def _check_action(self, action):
