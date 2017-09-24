@@ -117,7 +117,7 @@ class ConfigAction(Action):
             model.set_save_path(self.save_path)
         else:
             model = self.config["class"](**self.config["params"])
-            
+
         return model
 
     def _check_action(self, action):
