@@ -6,7 +6,7 @@ dependencies:
   - pandas=0.20.3
   - gitpython
   - flake8
-  - matplotlib=2.0.1
+  - matplotlib
   - pip=9.0.1
   - pip:
     - git+https://gitlab.vis.ethz.ch/vwegmayr/sumatra.git
