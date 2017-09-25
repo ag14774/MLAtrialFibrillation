@@ -6,7 +6,7 @@
 
 #Example 1
 #smt run --config .config.yaml -X data/X_train.npy -a fit_transform
-#module: ml_project.models.feature_selection
+module: ml_project.models.feature_selection
 class: RandomSelection
 params:
   n_components: 1000
