@@ -12,7 +12,7 @@ params:
   n_components: 1000
   random_state: 37
 
-#Example 2
+#Example 2 (Warning: might exceed your memory)
 #smt run --config .config.yaml -X data/X_train.npy -y data/y_1.csv -a fit
 #module: ml_project.models.regression
 #class: KernelEstimator
