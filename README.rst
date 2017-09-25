@@ -20,6 +20,7 @@ ETH Machine Learning Projects
 .. _`feature selection`: ml_project/models/feature_selection.py
 .. _models: ml_project/models
 .. _`.environment`: .environment
+.. _`request access`: https://docs.gitlab.com/ee/user/project/members/index.html#request-access-to-a-project
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -248,6 +249,8 @@ Code Submission
 
 It is required to publish your code shortly after the kaggle submission deadline
 (kaggle submission deadline + 24 hours).
+
+Make sure you `request access`_ in time, so that you can create a new branch and push code.
 
 First, you have to make sure that your code passes the flake8 tests.
 You can check by running
