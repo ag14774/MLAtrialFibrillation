@@ -67,8 +67,11 @@ Getting Started
 Get Started (Non-Linux)
 -----------------------
 
-The project framework has been tested in Linux (Ubuntu) environments only. If you
-are using Linux already, you can skip forward to Getting Started for Linux.
+The project framework has been tested mainly in Linux (Ubuntu) environments. If you
+are using Linux already, you can skip forward to Get Started for Linux.
+
+The framework should also work on OS X, but it has not been tested extensively.
+OS X users may choose to skip forward to Get started for Linux and OS X.
 
 If you are using Mac or Windows, please install VirtualBox_ and create an 64-bit Ubuntu_
 virtual machine (VM).
@@ -86,7 +89,7 @@ Once your VM is running, open a terminal and install git:
 
 After that, please continue with Getting Started for Linux.
 
-Get Started (Linux)
+Get Started (Linux and OS X)
 -------------------
 
 First you need to install miniconda_ on your system. If you already have Anaconda
