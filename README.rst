@@ -21,6 +21,7 @@ ETH Machine Learning Projects
 .. _models: ml_project/models
 .. _`.environment`: .environment
 .. _`request access`: https://docs.gitlab.com/ee/user/project/members/index.html#request-access-to-a-project
+.. _`invite link`: https://www.kaggle.com/t/4e959a86df6a450ea3dad585f71f67d1
 
 This repository contains the framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -31,7 +32,7 @@ during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
 
 The project description and result submission are hosted by Kaggle:
 
-- `Kaggle Project 1`_
+- `Kaggle Project 1`_ (`invite link`_)
 
 
 .. contents::
