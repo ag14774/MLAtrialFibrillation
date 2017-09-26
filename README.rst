@@ -73,7 +73,7 @@ are using Linux already, you can skip forward to Get Started for Linux.
 The framework should also work on OS X, but it has not been tested extensively.
 OS X users may choose to skip forward to Get started for Linux and OS X.
 
-If you are using Mac or Windows, please install VirtualBox_ and create an 64-bit Ubuntu_
+If you are using Windows, you need to install VirtualBox_ and create an 64-bit Ubuntu_
 virtual machine (VM).
 
 Make sure you allocate sufficient RAM (>= 8GB) and disk space (>= 64GB) for the VM.
