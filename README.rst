@@ -103,7 +103,20 @@ Having installed miniconda, clone the repository and run the setup script:
 Get the data
 ------------
 
-A simple way to download the data is with the kaggle-cli_ tool:
+A simple way to download the data is with the kaggle-cli_ tool.
+Make sure the environment is activated:
+
+.. code-block:: shell
+
+    source activate ml_project
+
+If you encounter problems with site-packages try:
+
+.. code-block:: shell
+
+    export PYTHONNOUSERSITE=True; source activate ml_project
+
+Then download the data:
 
 .. code-block:: shell
     
