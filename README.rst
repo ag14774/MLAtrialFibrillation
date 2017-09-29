@@ -85,7 +85,7 @@ Once your VM is running, open a terminal and install git:
 
 .. code-block:: shell
 
-    sudo aptitude install git
+    sudo apt-get install git
 
 After that, please continue with Getting Started for Linux.
 
