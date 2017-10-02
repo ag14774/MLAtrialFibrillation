@@ -113,12 +113,6 @@ Make sure the environment is activated:
 
     source activate ml_project
 
-If you encounter problems with site-packages try:
-
-.. code-block:: shell
-
-    export PYTHONNOUSERSITE=True; source activate ml_project
-
 Then download the data:
 
 .. code-block:: shell
