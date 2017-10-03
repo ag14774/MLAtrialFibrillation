@@ -26,18 +26,19 @@ class GridSearchCV(GridSearchCV):
     def fit(self, X, y=None, groups=None, **fit_params):
         super(GridSearchCV, self).fit(X, y, groups, **fit_params)
 
-        data = {
-            "best_params_": self.best_params_,
-            "mean_test_score": self.cv_results_["mean_test_score"],
-            "std_test_score": self.cv_results_["std_test_score"],
-        }
-        df = pd.DataFrame.from_dict(pd.io.json.json_normalize(data))
-        df.to_csv(normpath(self.save_path+"GridSearchCV.csv"))
-
-        if hasattr(self.best_estimator_, "save_path"):
-            self.best_estimator_.set_save_path(self.save_path)
-            self.best_estimator_.fit(X, y)
-
+        if self.save_path is not None:
+            data = {
+                "best_params_": self.best_params_,
+                "mean_test_score": self.cv_results_["mean_test_score"],
+                "std_test_score": self.cv_results_["std_test_score"],
+            }
+            df = pd.DataFrame.from_dict(pd.io.json.json_normalize(data))
+            df.to_csv(normpath(self.save_path+"GridSearchCV.csv"))
+    
+            if hasattr(self.best_estimator_, "save_path"):
+                self.best_estimator_.set_save_path(self.save_path)
+                self.best_estimator_.fit(X, y)
+    
         return self
 
     def set_save_path(self, save_path):
