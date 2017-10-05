@@ -34,11 +34,11 @@ class GridSearchCV(GridSearchCV):
             }
             df = pd.DataFrame.from_dict(pd.io.json.json_normalize(data))
             df.to_csv(normpath(self.save_path+"GridSearchCV.csv"))
-    
+
             if hasattr(self.best_estimator_, "save_path"):
                 self.best_estimator_.set_save_path(self.save_path)
                 self.best_estimator_.fit(X, y)
-    
+
         return self
 
     def set_save_path(self, save_path):
