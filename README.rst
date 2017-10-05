@@ -134,12 +134,6 @@ Make sure the environment is activated:
 
     source activate ml_project
 
-If you encounter problems with site-packages try:
-
-.. code-block:: shell
-
-    export PYTHONNOUSERSITE=True; source activate ml_project
-
 Make sure you have downloaded the data to the data_ folder, either by using the
 kaggle-cli_ tool or from the kaggle_ homepage.
 
