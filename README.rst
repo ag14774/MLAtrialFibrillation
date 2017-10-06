@@ -62,7 +62,7 @@ Ok, now we understand the code and the experiment setup. So let's run their code
 
 Sounds familiar? Don't worry, miniconda_ is a central part of the framework, which provides your code an isolated, functional environment to run.
 
-More information on how the framework functions.
+`More information`_ on how the framework functions.
 
 Getting Started
 ===============
