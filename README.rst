@@ -23,6 +23,7 @@ ETH Machine Learning Projects
 .. _`request access`: https://docs.gitlab.com/ee/user/project/members/index.html#request-access-to-a-project
 .. _`invite link`: https://www.kaggle.com/t/4e959a86df6a450ea3dad585f71f67d1
 .. _`More information`: https://drive.google.com/open?id=1UM_osCot4MomlPQu-G83LHt721nSyIJG5t6rO_yLOZU
+.. _`General Project Information`: https://drive.google.com/open?id=1NvAqcPzgnTIflpG6BzeAt3dSUlu1JlYJ_2BsQVab6pI
 
 This repository contains the *Python 3.5.3* framework for the practical projects offered
 during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
@@ -33,8 +34,8 @@ during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
 
 The project description and result submission are hosted by Kaggle:
 
+- `General Project Information`_
 - `Kaggle Project 1`_ (`invite link`_)
-
 
 .. contents::
 
