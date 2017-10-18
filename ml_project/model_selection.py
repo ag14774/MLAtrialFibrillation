@@ -14,13 +14,16 @@ class GridSearchCV(GridSearchCV):
         self.estimator = est_class(est_params)
         self.set_save_path(save_path)
         self.cv = cv
-        if cv is not None:
+        if cv is not None and type(cv) is not int:
             self.cv_obj = cv["class"](**cv["params"])
+        elif type(cv) is int:
+            self.cv_obj = cv
         else:
             self.cv_obj = None
         super(GridSearchCV, self).__init__(self.estimator, param_grid,
                                            cv=self.cv_obj,
                                            n_jobs=n_jobs,
+                                           refit=True,
                                            error_score=error_score,
                                            **kwargs)
 
@@ -38,7 +41,6 @@ class GridSearchCV(GridSearchCV):
 
             if hasattr(self.best_estimator_, "save_path"):
                 self.best_estimator_.set_save_path(self.save_path)
-                self.best_estimator_.fit(X, y)
 
         return self
 
