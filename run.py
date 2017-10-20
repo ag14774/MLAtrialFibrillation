@@ -11,6 +11,7 @@ from abc import abstractmethod
 from ml_project import configparse
 from pprint import pprint
 from os.path import normpath
+from inspect import getfullargspec
 
 
 class Action(ABC):
@@ -71,6 +72,13 @@ class Action(ABC):
             return path
         else:
             return None
+            
+    def transform(self):
+        if "y" in getfullargspec(self.model.transform).args:
+		    self.X_new = self.model.transform(self.X, self.y)
+	    else:
+		    self.X_new = self.model.transform(self.X)
+        self._X_new_set = True
 
 
 class ConfigAction(Action):
@@ -89,10 +97,6 @@ class ConfigAction(Action):
 
     def fit(self):
         self.model.fit(self.X, self.y)
-
-    def transform(self):
-        self.X_new = self.model.transform(self.X, self.y)
-        self._X_new_set = True
 
     def fit_transform(self):
         self.fit()
@@ -139,10 +143,6 @@ class ModelAction(Action):
     def __init__(self, args):
         super(ModelAction, self).__init__(args)
         self.act()
-
-    def transform(self):
-        self.X_new = self.model.transform(self.X, self.y)
-        self._X_new_set = True
 
     def predict(self):
         self.y_new = self.model.predict(self.X)
