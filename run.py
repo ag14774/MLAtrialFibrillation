@@ -72,7 +72,7 @@ class Action(ABC):
             return path
         else:
             return None
-            
+
     def transform(self):
         if "y" in getfullargspec(self.model.transform).args:
             self.X_new = self.model.transform(self.X, self.y)
