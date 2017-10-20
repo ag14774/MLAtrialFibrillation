@@ -75,9 +75,9 @@ class Action(ABC):
             
     def transform(self):
         if "y" in getfullargspec(self.model.transform).args:
-		    self.X_new = self.model.transform(self.X, self.y)
-	    else:
-		    self.X_new = self.model.transform(self.X)
+            self.X_new = self.model.transform(self.X, self.y)
+        else:
+            self.X_new = self.model.transform(self.X)
         self._X_new_set = True
 
 
