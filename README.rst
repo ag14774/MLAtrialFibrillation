@@ -34,7 +34,7 @@ during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
 2. Structured & reproducible experiments by integration of sumatra_ and miniconda_.
 
 
-The project description and result submission are hosted by Kaggle:
+The project description and result submission are hosted by Kaggle: 
 
 - `General Project Information`_
 - `Kaggle Project 1`_ (`invite link 1`_)
