@@ -15,13 +15,15 @@ ETH Machine Learning Projects
 .. _kaggle-cli: https://github.com/floydwch/kaggle-cli
 .. _kaggle: https://inclass.kaggle.com/c/ml-project-1
 .. _`Kaggle Project 1`: https://inclass.kaggle.com/c/ml-project-1
+.. _`Kaggle Project 2`: https://www.kaggle.com/c/ml-project-2
 .. _runner: run.py
 .. _regression: ml_project/models/regression.py
 .. _`feature selection`: ml_project/models/feature_selection.py
 .. _models: ml_project/models
 .. _`.environment`: .environment
 .. _`request access`: https://docs.gitlab.com/ee/user/project/members/index.html#request-access-to-a-project
-.. _`invite link`: https://www.kaggle.com/t/4e959a86df6a450ea3dad585f71f67d1
+.. _`invite link 1`: https://www.kaggle.com/t/4e959a86df6a450ea3dad585f71f67d1
+.. _`invite link 2`: https://www.kaggle.com/t/4e959a86df6a450ea3dad585f71f67d1
 .. _`More information`: https://drive.google.com/open?id=1UM_osCot4MomlPQu-G83LHt721nSyIJG5t6rO_yLOZU
 .. _`General Project Information`: https://drive.google.com/open?id=1NvAqcPzgnTIflpG6BzeAt3dSUlu1JlYJ_2BsQVab6pI
 
@@ -35,7 +37,7 @@ during the *Machine Learning* course at ETH Zurich. It serves two main purposes:
 The project description and result submission are hosted by Kaggle:
 
 - `General Project Information`_
-- `Kaggle Project 1`_ (`invite link`_)
+- `Kaggle Project 1`_ (`invite link 1`_)
 
 .. contents::
 
