@@ -167,7 +167,7 @@ class ModelAction(Action):
             df.index.name = "ID"
             df.to_csv(y_path)
         elif self._y_new_set and self.args.action == "predict_proba":
-            with open(y_path) as csvfile:
+            with open(y_path, "w") as csvfile:
                 writer = csv.writer(csvfile, delimiter=',')
                 for prediction in self.y_new:
                     writer.writerow(prediction)
