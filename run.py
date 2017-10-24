@@ -148,13 +148,16 @@ class ModelAction(Action):
         self.y_new = self.model.predict(self.X)
         self._y_new_set = True
 
+    def predict_proba(self):
+        self.y_new = self.model.predict_proba(self.X)
+        self._y_new_set = True
+
     def score(self):
         self.model.score(self.X, self.y)
 
     def _save(self):
         y_path = normpath(self.save_path+"y_"+self.args.smt_label+".csv")
         X_path = normpath(self.save_path+"X_new.npy")
-
         if self._X_new_set:
             np.save(X_path, self.X_new)
         if self._y_new_set:
@@ -170,9 +173,9 @@ class ModelAction(Action):
         return model
 
     def _check_action(self, action):
-        if action not in ["transform", "predict", "score"]:
-            raise RuntimeError("Can only run transform, predict or score from"
-                               "model, got {}.".format(action))
+        if action not in ["transform", "predict", "score", "predict_proba"]:
+            raise RuntimeError("Can only run transform, predict, predict_proba "
+                               "or score from model, got {}.".format(action))
 
 
 if __name__ == '__main__':
