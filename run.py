@@ -189,7 +189,7 @@ if __name__ == '__main__':
     arg_parser.add_argument("-y", help="Input labels")
 
     arg_parser.add_argument("-a", "--action", choices=["transform", "predict",
-                            "fit", "fit_transform", "score"],
+                            "fit", "fit_transform", "score", "predict_proba"],
                             help="Action to perform.",
                             required=True)
 
