@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 import pandas as pd
+import csv
 
 from sklearn.externals import joblib
 from abc import ABC
@@ -160,11 +161,17 @@ class ModelAction(Action):
         X_path = normpath(self.save_path+"X_new.npy")
         if self._X_new_set:
             np.save(X_path, self.X_new)
-        if self._y_new_set:
+        if self._y_new_set and self.args.action == "predict":
             df = pd.DataFrame({"Prediction": self.y_new})
             df.index += 1
             df.index.name = "ID"
             df.to_csv(y_path)
+        elif self._y_new_set and self.args.action == "predict_proba":
+            with open(y_path) as csvfile:
+                writer = csv.writer(csvfile, delimiter=',')
+                for prediction in self.y_new:
+                    writer.writerow(prediction)
+
 
     def _load_model(self):
         model = joblib.load(self.args.model)
