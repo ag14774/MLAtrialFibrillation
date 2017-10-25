@@ -17,6 +17,7 @@ class NonZeroSelection(BaseEstimator, TransformerMixin):
         X = check_array(X)
         return X[:, self.nonzero]
 
+
 class RandomSelection(BaseEstimator, TransformerMixin):
     """Random Selection of features"""
     def __init__(self, n_components=1000, random_state=None):

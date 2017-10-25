@@ -170,13 +170,12 @@ class ModelAction(Action):
             with open(y_path, "w") as csvfile:
                 writer = csv.writer(csvfile, delimiter=',')
                 writer.writerow(["ID", "Prediction"])
-                n=1
+                n = 1
                 for prediction in self.y_new:
                     prediction = np.round(prediction, decimals=4)
                     prediction = " ".join(prediction.astype("str"))
                     writer.writerow([n, prediction])
-                    n+=1
-
+                    n += 1
 
     def _load_model(self):
         model = joblib.load(self.args.model)
@@ -186,8 +185,8 @@ class ModelAction(Action):
 
     def _check_action(self, action):
         if action not in ["transform", "predict", "score", "predict_proba"]:
-            raise RuntimeError("Can only run transform, predict, predict_proba "
-                               "or score from model, got {}.".format(action))
+            raise RuntimeError("Can only run transform, predict, predict_proba"
+                               " or score from model, got {}.".format(action))
 
 
 if __name__ == '__main__':
