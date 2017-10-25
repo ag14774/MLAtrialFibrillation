@@ -4,7 +4,7 @@ from sklearn.utils.validation import check_array, check_is_fitted
 
 
 class MeanPredictor(BaseEstimator, TransformerMixin):
-    """docstring for LinearDiscriminant"""
+    """docstring for MeanPredictor"""
     def fit(self, X, y):
         self.mean = y.mean(axis=0)
         return self
