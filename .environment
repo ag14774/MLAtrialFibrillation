@@ -1,7 +1,7 @@
 dependencies:
   - python=3.5.3
   - numpy=1.13.0
-  - scikit-learn=0.18.2
+  - scikit-learn=0.19.1
   - scipy=0.19.1
   - pandas=0.20.3
   - gitpython
