@@ -172,6 +172,7 @@ class ModelAction(Action):
                 writer.writerow(["ID", "Prediction"])
                 n=1
                 for prediction in self.y_new:
+                    prediction = np.round(prediction, decimals=4)
                     prediction = " ".join(prediction.astype("str"))
                     writer.writerow([n, prediction])
                     n+=1
