@@ -13,7 +13,13 @@ class Pipeline(Pipeline):
     def load_steps(self, class_list):
         steps = []
         for dict_ in class_list:
-            name = dict_["class"].__name__
+            if "class" not in dict_:
+                raise RuntimeError("Missing class key in config of Pipeline/"
+                                   "class_list")
+            if "name" in dict_:
+                name = dict_["name"]
+            else:
+                name = dict_["class"].__name__
             if "params" in dict_:
                 params = dict_["params"]
                 steps.append((name, dict_["class"](**params)))
