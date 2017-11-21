@@ -299,6 +299,8 @@ Next, create and push a new branch which is named :code:`legi-number/ml-project-
 
 The first part has to be your Legi-Number, the number in the second part identifies the project.
 
+**Note: The checks described in the following parapgraph have been temporarliy disabled, i.e. you can ignore the warning of failed flags on gitlab and skip the below paragraph!** Make sure to pass flake8 locally on your machine and that your code branch appears on gitlab. A selfcheck csv file will be uploaded after the project deadlines and after the checker completed.
+
 This repository runs an automatic quality check, when you push your branch.
 Additionally, the timestamp of the push is checked.
 
