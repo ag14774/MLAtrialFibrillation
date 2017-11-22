@@ -109,7 +109,7 @@ Having installed miniconda, clone the repository and run the setup script:
 
 .. code-block:: shell
 
-    git clone https://gitlab.vis.ethz.ch/vwegmayr/ml-project.git
+    git clone https://gitlab.vis.ethz.ch/vwegmayr/ml-project.git --single-branch
     cd ml-project
     python setup.py
 
