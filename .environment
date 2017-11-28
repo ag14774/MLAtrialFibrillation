@@ -12,3 +12,5 @@ dependencies:
     - git+https://gitlab.vis.ethz.ch/vwegmayr/sumatra.git
     - pyyaml==3.12
     - kaggle-cli
+    - fastdtw
+    - pydtw

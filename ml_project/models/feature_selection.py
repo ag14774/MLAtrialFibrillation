@@ -1,7 +1,7 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils import check_random_state
-from sklearn.utils.validation import check_array, check_is_fitted
 from sklearn.utils.random import sample_without_replacement
+from sklearn.utils.validation import check_array, check_is_fitted
 
 
 class NonZeroSelection(BaseEstimator, TransformerMixin):
