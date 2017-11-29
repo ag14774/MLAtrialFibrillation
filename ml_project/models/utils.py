@@ -38,7 +38,6 @@ def DTWDistance(s1, s2, accuracy='exact', radius=1):
         cost_matrix = dtw1d(s1, s2)
         dist = cost_matrix(len(s1) - 1, len(s2) - 1)
     else:
-        print(radius)
         dist, _ = fastdtw(s1, s2, radius=radius)
     # print("Calculating DTW: ", dist)
     # sys.stdout.flush()
