@@ -30,6 +30,7 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
                  weights='uniform',
                  algorithm='auto',
                  accuracy='exact',
+                 radius=1,
                  leaf_size=30,
                  p=2,
                  n_jobs=1,
@@ -42,7 +43,8 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
             n_jobs=n_jobs,
             **kwargs)
         self.accuracy = accuracy
-        self.metric_params = {'accuracy': accuracy}
+        self.radius = radius
+        self.metric_params = {'accuracy': accuracy, 'radius': radius}
         self.metric = DTWDistance
 
     def fit(self, X, y):
@@ -51,6 +53,7 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
         return super(DTWKNeighborsClassifier, self).fit(X, y)
 
     def predict(self, X):
+        self.metric_params = {'accuracy': self.accuracy, 'radius': self.radius}
         print("Predicting data with shape: ", X.shape)
         sys.stdout.flush()
         return super(DTWKNeighborsClassifier, self).predict(X)
