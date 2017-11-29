@@ -40,6 +40,10 @@ class CutTimeSeries(BaseEstimator, TransformerMixin):
 
 class ScaleSamples(BaseEstimator, TransformerMixin):
     """docstring"""
+
+    def fit(self, X, y=None):
+        return self
+
     def transform(self, X, y=None):
         X = scale(X, axis=1, copy=False)
         return X
