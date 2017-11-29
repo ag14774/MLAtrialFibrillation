@@ -2,6 +2,7 @@ import sys
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.preprocessing import scale
 from sklearn.utils.validation import check_array, check_is_fitted
 
 # IDEA: CHOOSE A WINDOW THAT MAXIMIZES THIS METRIC
@@ -34,4 +35,11 @@ class CutTimeSeries(BaseEstimator, TransformerMixin):
         X = X[:, 0:self.t]
         print("Shape after cutting: ", X.shape)
         sys.stdout.flush()
+        return X
+
+
+class ScaleSamples(BaseEstimator, TransformerMixin):
+    """docstring"""
+    def transform(self, X, y=None):
+        X = scale(X, axis=1, copy=False)
         return X

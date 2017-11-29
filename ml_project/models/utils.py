@@ -1,5 +1,7 @@
 import sys
 
+import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.metrics import f1_score
 
 from fastdtw import fastdtw
@@ -24,3 +26,12 @@ def DTWDistance(s1, s2, accuracy='exact'):
     # print("Calculating DTW: ", dist)
     # sys.stdout.flush()
     return dist
+
+
+def fftanalysis(signal, rate=300):
+    fftsignal = np.fft.fft(signal)
+    freqs = np.fft.fftfreq(len(signal), d=1/rate)
+    plt.plot(freqs, fftsignal)
+    plt.show()
+    idx = np.argmax(np.abs(fftsignal))
+    print("Most important frequency: ", freqs[idx])
