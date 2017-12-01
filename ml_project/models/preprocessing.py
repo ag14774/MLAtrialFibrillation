@@ -40,7 +40,6 @@ class CutBestWindow(BaseEstimator, TransformerMixin):
 
     def transform(self, X, y=None):
         print("Shape before cutting: ", X.shape)
-        X = check_array(X)
         X = find_best_windows(X, self.size)
         print("Shape after cutting: ", X.shape)
         sys.stdout.flush()
