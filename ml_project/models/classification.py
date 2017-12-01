@@ -1,11 +1,13 @@
 import sys
+from functools import partial
 
 import numpy as np
+from scipy.spatial.distance import cdist
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.utils.validation import check_array, check_is_fitted
 
-from ml_project.models.utils import DTWDistance, knn, scorer
+from ml_project.models.utils import DTWDistance, LB_Keogh, knn, scorer
 
 
 class MeanPredictor(BaseEstimator, TransformerMixin):
@@ -54,7 +56,7 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
     def fit(self, X, y):
         print("Fitting on training data with shape: ", X.shape)
         sys.stdout.flush()
-        if self.n_neighbors == 1:
+        if self.n_neighbors == 1 and self.accuracy == 'window':
             self.train = X
             self.train_labels = y
             return self
@@ -64,7 +66,8 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
     def predict(self, X):
         print("Predicting data with shape: ", X.shape)
         sys.stdout.flush()
-        if self.n_neighbors == 1:
+        if self.n_neighbors == 1 and self.accuracy == 'window':
+            self.accuracy = 1
             return knn(
                 self.train,
                 self.train_labels,
@@ -72,7 +75,6 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
                 self.radius,
                 accuracy=self.accuracy)
         else:
-
             self.metric_params = {
                 'accuracy': self.accuracy,
                 'radius': self.radius

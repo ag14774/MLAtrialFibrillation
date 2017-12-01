@@ -7,6 +7,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import scale
 from sklearn.utils.validation import check_array, check_is_fitted
 
+from ml_project.models.utils import find_best_windows
+
 
 class CutTimeSeries(BaseEstimator, TransformerMixin):
     """docstring"""
@@ -22,6 +24,24 @@ class CutTimeSeries(BaseEstimator, TransformerMixin):
         print("Shape before cutting: ", X.shape)
         X = check_array(X)
         X = X[:, 0:self.t]
+        print("Shape after cutting: ", X.shape)
+        sys.stdout.flush()
+        return X
+
+
+class CutBestWindow(BaseEstimator, TransformerMixin):
+    """docstring"""
+
+    def __init__(self, size=1000):
+        self.size = size
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        print("Shape before cutting: ", X.shape)
+        X = check_array(X)
+        X = find_best_windows(X, self.size)
         print("Shape after cutting: ", X.shape)
         sys.stdout.flush()
         return X

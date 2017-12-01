@@ -1,13 +1,11 @@
 import sys
-from functools import partial
 
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import f1_score
-from sklearn.metrics.pairwise import pairwise_distances
 
 from fastdtw import fastdtw
-from numba import int32, jit, jitclass
+from numba import int32, jit, jitclass, prange
 from pydtw import dtw1d
 
 spec = [
@@ -177,13 +175,31 @@ def autocorr(x):
     acorr = result[n // 2 + 1:] / (x.var() * np.arange(n - 1, n // 2, -1))
     lag = np.abs(acorr).argmax() + 1
     r = acorr[lag - 1]
-    plt.plot(acorr)
-    if np.abs(r) > 0.5:
-        print('Appears to be autocorrelated with r = {}, lag = {}'.format(
-            r, lag))
-    else:
-        print('Appears to be not autocorrelated')
+    r = np.abs(r)
     return r, lag
+
+
+def find_best_window(x, size=1000):
+    best_i = 0
+    best_r = 0
+    best_l = 0
+    for i in range(0, len(x) - size + 1):
+        r, lag = autocorr(x[i:i+size])
+        if r >= best_r:
+            best_i = i
+            best_r = r
+            best_l = lag
+    # print("Found best window with (r, l)=", best_r, best_l)
+    plt.plot(x[best_i:best_i+size])
+    plt.show()
+    return best_i
+
+
+def find_best_windows(X, size=1000):
+    for i in range(len(X)):
+        idx = find_best_window(X[i], size)
+        X[i, 0:size] = X[i, idx:idx+size]
+    return X[:, 0:size]
 
 
 def scorer(estimator, X, y):
@@ -210,36 +226,40 @@ def DTWDistance(s1, s2, accuracy='exact', radius=1):
 
 
 @jit(nopython=True, nogil=True)
-def fastdtw_wrapper(s1, s2, radius):
-    cost, _ = fastdtw(s1, s2, radius=radius)
+def fastdtw_wrapper(s1, s2, w):
+    cost, _ = fastdtw(s1, s2, radius=w)
     return cost
 
 
 @jit(nopython=True, nogil=True)
-def dtw1d_wrapper(s1, s2):
+def dtw1d_wrapper(s1, s2, w):
     cost, _, _ = dtw1d(s1, s2)
     return cost[-1, -1]
 
 
+@jit(nopython=True, nogil=True, parallel=True)
+def calcLowerBounds(test, train, r):
+    lbs = np.empty((test.shape[0], train.shape[0]), dtype=np.float32)
+    for i in prange(test.shape[0]):
+        print("Calculating lower bound for ", i)
+        for j in range(train.shape[0]):
+            lbs[i, j] = LB_Keogh(test[i], train[j], r)
+    return lbs
+
+
 @jit(nopython=True, nogil=True)
-def knn(train, train_labels, test, w, accuracy='exact'):
-    dist_func = None
-    if accuracy == 'exact':
-        dist_func = dtw1d_wrapper
-    elif accuracy == 'window':
-        dist_func = partial(DTWDistanceWindow, w=w)
-    else:
-        dist_func = partial(fastdtw_wrapper, radius=w)
+def knn(train, train_labels, test, w, accuracy=1):
+    print("Calculating lower bounds...")
     # We can make the bound tighter by decreasing r
-    lbs = pairwise_distances(
-        test, train, metric=LB_Keogh, r=w // 2 - 1, n_jobs=-2)
+    lbs = calcLowerBounds(test, train, w // 2 - 1)
     preds = np.empty(test.shape[0])
+    print("Starting 1-NN...")
     for i in range(test.shape[0]):
         min_dist = np.inf
         min_label = 0
         for j in range(train.shape[0]):
             if lbs[i, j] < min_dist:
-                dist = dist_func(test[i], train[j])
+                dist = DTWDistanceWindow(test[i], train[j], w)
                 if dist < min_dist:
                     min_dist = dist
                     min_label = train_labels[j]
