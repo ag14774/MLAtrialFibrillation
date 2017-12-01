@@ -5,7 +5,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.utils.validation import check_array, check_is_fitted
 
-from ml_project.models.utils import DTWDistance, scorer
+from ml_project.models.utils import DTWDistance, knn, scorer
 
 
 class MeanPredictor(BaseEstimator, TransformerMixin):
@@ -29,7 +29,7 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
                  n_neighbors=5,
                  weights='uniform',
                  algorithm='auto',
-                 accuracy='exact',
+                 accuracy='window',
                  radius=1,
                  leaf_size=30,
                  p=2,
@@ -42,21 +42,42 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
             leaf_size=leaf_size,
             n_jobs=n_jobs,
             **kwargs)
+        # accuracy = 'exact' -> 'radius' is ignored
+        # accuracy = 'approximate' -> 'radius' is the level of accuracy
+        # accuracy = 'window' -> 'radius' is the window
         self.accuracy = accuracy
         self.radius = radius
+        # TODO: move this to predict
         self.metric_params = {'accuracy': accuracy, 'radius': radius}
         self.metric = DTWDistance
 
     def fit(self, X, y):
         print("Fitting on training data with shape: ", X.shape)
         sys.stdout.flush()
-        return super(DTWKNeighborsClassifier, self).fit(X, y)
+        if self.n_neighbors == 1:
+            self.train = X
+            self.train_labels = y
+            return self
+        else:
+            return super(DTWKNeighborsClassifier, self).fit(X, y)
 
     def predict(self, X):
-        self.metric_params = {'accuracy': self.accuracy, 'radius': self.radius}
         print("Predicting data with shape: ", X.shape)
         sys.stdout.flush()
-        return super(DTWKNeighborsClassifier, self).predict(X)
+        if self.n_neighbors == 1:
+            return knn(
+                self.train,
+                self.train_labels,
+                X,
+                self.radius,
+                accuracy=self.accuracy)
+        else:
+
+            self.metric_params = {
+                'accuracy': self.accuracy,
+                'radius': self.radius
+            }
+            return super(DTWKNeighborsClassifier, self).predict(X)
 
     def score(self, X, y):
         return scorer(self, X, y)

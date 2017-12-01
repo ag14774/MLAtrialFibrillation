@@ -14,3 +14,4 @@ dependencies:
     - kaggle-cli
     - fastdtw
     - pydtw
+    - numba
