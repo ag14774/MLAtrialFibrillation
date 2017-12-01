@@ -1,13 +1,11 @@
 import sys
-from functools import partial
 
 import numpy as np
-from scipy.spatial.distance import cdist
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.utils.validation import check_array, check_is_fitted
 
-from ml_project.models.utils import DTWDistance, LB_Keogh, knn, scorer
+from ml_project.models.utils import DTWDistance, knn, scorer
 
 
 class MeanPredictor(BaseEstimator, TransformerMixin):
