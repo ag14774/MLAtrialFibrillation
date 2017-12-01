@@ -168,7 +168,7 @@ def LB_Keogh(s1, s2, r):
     return LB_sum
 
 
-@jit(nopython=True, nogil=True)
+@jit
 def autocorr(x):
     n = x.size
     norm = (x - np.mean(x))
@@ -180,7 +180,7 @@ def autocorr(x):
     return r, lag
 
 
-@jit(nopython=True, nogil=True)
+@jit
 def find_best_window(x, size=1000):
     best_i = 0
     best_r = 0
@@ -197,9 +197,10 @@ def find_best_window(x, size=1000):
     return best_i
 
 
-@jit(nopython=True, nogil=True, parallel=True)
+@jit
 def find_best_windows(X, size=1000):
-    for i in prange(len(X)):
+    for i in range(len(X)):
+        print("Selecting window for:", i)
         idx = find_best_window(X[i], size)
         X[i, 0:size] = X[i, idx:idx+size]
     return X[:, 0:size]
