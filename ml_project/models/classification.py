@@ -84,7 +84,7 @@ class DTWKNeighborsClassifier(BaseEstimator, TransformerMixin):
         print("Starting prediction...")
         sys.stdout.flush()
         results = self.kneighborsclassifier.predict(X)
-        print(results)
+        return results
 
     def score(self, X, y):
         return scorer(self, X, y)
