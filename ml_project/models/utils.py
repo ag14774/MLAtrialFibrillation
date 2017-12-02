@@ -279,17 +279,21 @@ def extract_qrs(s, qrss, sampling_rate=300):
     refractory_period = round(120 * proportionality)
     length_of_qrs = 2 * refractory_period
     peaks, _ = detect_qrs(s, sampling_rate)
+    s = bandpass_filter(s, 0.0, 15.0, sampling_rate, 1)
     # print(peaks)
-    if(qrss[-1] >= len(peaks)):
+    if (qrss[-1] >= len(peaks)):
         print("Failsafe enabled...")
         sys.stdout.flush()
+        qrss = qrss.copy()
         qrss.fill(0)
     result = np.empty((len(qrss), length_of_qrs), dtype=np.float32)
     for i in range(len(qrss)):
         qrorder = qrss[i]
         qrindex = peaks[qrorder]
-        result[i, :] = s[qrindex - refractory_period:
-                         qrindex + refractory_period]
+        temp = s[max(0, qrindex - refractory_period):
+                 qrindex + refractory_period]
+        temp = np.pad(temp, (length_of_qrs - len(temp)) // 2 + 1, 'median')
+        result[i, :] = temp[:length_of_qrs]
     result = scale(result, axis=1, copy=False)
     return result
 
@@ -305,6 +309,8 @@ def transform_data(X, y, QRSList, sampling_rate=300):
         # print(i)
         Xnew[i, :] = np.ravel(
             extract_qrs(sample, QRSList, sampling_rate=sampling_rate))
+        # plt.plot(Xnew[i, :])
+        # plt.show()
     return Xnew, y
 
 
