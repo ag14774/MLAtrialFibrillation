@@ -474,7 +474,7 @@ def fastdtwQRS(s1, s2, radius=1, length_of_qrs=50):
     s2 = s2.reshape(-1, length_of_qrs)
     metric = partial(fastdtw_wrapper, radius=radius)
     dists = cdist(s1, s2, metric=metric)
-    print(dists.shape)
+    # print(dists.shape)
     return np.min(dists)
 
 
