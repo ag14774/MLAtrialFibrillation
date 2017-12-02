@@ -1,4 +1,5 @@
 import sys
+from functools import partial
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -471,7 +472,8 @@ def fastdtw_wrapper(s1, s2, radius=1):
 def fastdtwQRS(s1, s2, radius=1, length_of_qrs=50):
     s1 = s1.reshape(-1, length_of_qrs)
     s2 = s2.reshape(-1, length_of_qrs)
-    dists = cdist(s1, s2, metric=fastdtw_wrapper, radius=radius)
+    metric = partial(fastdtw_wrapper, radius=radius)
+    dists = cdist(s1, s2, metric=metric)
     print(dists.shape)
     return np.min(dists)
 
