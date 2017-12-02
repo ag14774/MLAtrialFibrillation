@@ -7,6 +7,8 @@ from scipy.signal import butter, lfilter
 from scipy.spatial.distance import cdist
 from sklearn.metrics import f1_score
 from sklearn.preprocessing import scale
+from sklearn.utils import check_random_state
+from sklearn.utils.random import sample_without_replacement
 
 from fastdtw import fastdtw
 from numba import int32, jit, jitclass, prange
@@ -299,7 +301,29 @@ def extract_qrs(s, qrss, sampling_rate=300):
     return result
 
 
-def transform_data(X, y, QRSList, sampling_rate=300):
+def extract_qrs_random(s, random_state, sampling_rate=300):
+    base_frequency = 250
+    proportionality = sampling_rate / base_frequency
+    refractory_period = round(120 * proportionality)
+    length_of_qrs = 2 * refractory_period
+    peaks, _ = detect_qrs(s, sampling_rate)
+    s = bandpass_filter(s, 0.0, 15.0, sampling_rate, 1)
+    # print(peaks)
+    random_state = check_random_state(random_state)
+    qrss = sample_without_replacement(len(peaks), 1, random_state=random_state)
+    result = np.empty((len(qrss), length_of_qrs), dtype=np.float32)
+    for i in range(len(qrss)):
+        qrorder = qrss[i]
+        qrindex = peaks[qrorder]
+        temp = s[max(0, qrindex - refractory_period):
+                 qrindex + refractory_period]
+        temp = np.pad(temp, (length_of_qrs - len(temp)) // 2 + 1, 'median')
+        result[i, :] = temp[:length_of_qrs]
+    result = scale(result, axis=1, copy=False)
+    return result
+
+
+def transform_data(X, y, QRSList=None, random_state=None, sampling_rate=300):
     base_frequency = 250
     proportionality = sampling_rate / base_frequency
     refractory_period = round(120 * proportionality)
@@ -308,8 +332,12 @@ def transform_data(X, y, QRSList, sampling_rate=300):
         (X.shape[0], length_of_qrs * len(QRSList)), dtype=np.float32)
     for i, sample in enumerate(X):
         # print(i)
-        Xnew[i, :] = np.ravel(
-            extract_qrs(sample, QRSList, sampling_rate=sampling_rate))
+        if QRSList is None:
+            temp = extract_qrs_random(
+                sample, random_state, sampling_rate=sampling_rate)
+        else:
+            temp = extract_qrs(sample, QRSList, sampling_rate=sampling_rate)
+        Xnew[i, :] = np.ravel(temp)
         # plt.plot(Xnew[i, :])
         # plt.show()
     return Xnew, y
