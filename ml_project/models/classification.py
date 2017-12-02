@@ -22,7 +22,7 @@ class MeanPredictor(BaseEstimator, TransformerMixin):
         return np.tile(self.mean, (n_samples, 1))
 
 
-class DTWKNeighborsClassifier(KNeighborsClassifier):
+class DTWKNeighborsClassifier(BaseEstimator, TransformerMixin):
     """docstring"""
 
     def __init__(self,
@@ -36,46 +36,55 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
                  QRSList=[3, 7],
                  sampling_rate=300,
                  **kwargs):
-        super(DTWKNeighborsClassifier, self).__init__(
-            n_neighbors=n_neighbors,
-            weights=weights,
-            algorithm=algorithm,
-            leaf_size=leaf_size,
-            n_jobs=n_jobs,
-            **kwargs)
+        self.n_neighbors = n_neighbors
+        self.weights = weights
+        self.algorithm = algorithm
+        self.leaf_size = leaf_size
+        self.p = p
+        self.n_jobs = n_jobs
+
         self.radius = radius
         self.QRSList = QRSList
         self.sampling_rate = sampling_rate
 
+        self.kneighborsclassifier = None
+
     def fit(self, X, y):
         self.QRSList = np.array(self.QRSList)
+        base_frequency = 250
+        proportionality = self.sampling_rate / base_frequency
+        refractory_period = round(120 * proportionality)
+        length_of_qrs = 2 * refractory_period
+        metric_params = {'radius': self.radius, 'length_of_qrs': length_of_qrs}
+        self.kneighborsclassifier = KNeighborsClassifier(
+            self.n_neighbors,
+            weights=self.weights,
+            algorithm=self.algorithm,
+            leaf_size=self.leaf_size,
+            p=self.p,
+            metric=fastdtwQRS,
+            metric_params=metric_params,
+            n_jobs=self.n_jobs)
         print("Training data QRS detection...shape:", X.shape)
         sys.stdout.flush()
         X, y = transform_data(X, y, self.QRSList, self.sampling_rate)
         print("Transformed training data:", X.shape)
         sys.stdout.flush()
-        return super(DTWKNeighborsClassifier, self).fit(X, y)
+        return self.kneighborsclassifier.fit(X, y)
 
     def predict(self, X):
+        check_is_fitted(self, ["kneighborsclassifier"])
         self.QRSList = np.array(self.QRSList)
         print("Testing data QRS detection...shape", X.shape)
         sys.stdout.flush()
 
-        base_frequency = 250
-        proportionality = self.sampling_rate / base_frequency
-        refractory_period = round(120 * proportionality)
-        length_of_qrs = 2 * refractory_period
-        self.metric = fastdtwQRS
-        self.metric_params = {
-            'radius': self.radius,
-            'length_of_qrs': length_of_qrs
-        }
         X, _ = transform_data(X, None, self.QRSList, self.sampling_rate)
 
         print("Transformed testing data:", X.shape)
         print("Starting prediction...")
         sys.stdout.flush()
-        return super(DTWKNeighborsClassifier, self).predict(X)
+        results = self.kneighborsclassifier.predict(X)
+        print(results)
 
     def score(self, X, y):
         return scorer(self, X, y)
