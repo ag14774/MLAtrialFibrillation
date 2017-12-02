@@ -5,7 +5,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.utils.validation import check_array, check_is_fitted
 
-from ml_project.models.utils import DTWDistance, knn, scorer
+from ml_project.models.utils import fastdtwQRS, scorer, transform_data
 
 
 class MeanPredictor(BaseEstimator, TransformerMixin):
@@ -29,11 +29,12 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
                  n_neighbors=5,
                  weights='uniform',
                  algorithm='auto',
-                 accuracy='window',
-                 radius=1,
                  leaf_size=30,
                  p=2,
                  n_jobs=1,
+                 radius=1,
+                 QRSList=[3, 7],
+                 sampling_rate=300,
                  **kwargs):
         super(DTWKNeighborsClassifier, self).__init__(
             n_neighbors=n_neighbors,
@@ -42,42 +43,37 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
             leaf_size=leaf_size,
             n_jobs=n_jobs,
             **kwargs)
-        # accuracy = 'exact' -> 'radius' is ignored
-        # accuracy = 'approximate' -> 'radius' is the level of accuracy
-        # accuracy = 'window' -> 'radius' is the window
-        self.accuracy = accuracy
         self.radius = radius
-        # TODO: move this to predict
-        self.metric_params = {'accuracy': accuracy, 'radius': radius}
-        self.metric = DTWDistance
+        self.QRSList = QRSList
+        self.sampling_rate = sampling_rate
 
     def fit(self, X, y):
-        print("Fitting on training data with shape: ", X.shape)
+        print("Training data QRS detection...shape:", X.shape)
         sys.stdout.flush()
-        if self.n_neighbors == 1 and self.accuracy == 'window':
-            self.train = X
-            self.train_labels = y
-            return self
-        else:
-            return super(DTWKNeighborsClassifier, self).fit(X, y)
+        X, y = transform_data(X, y, self.QRSList, self.sampling_rate)
+        print("Transformed training data:", X.shape)
+        sys.stdout.flush()
+        return super(DTWKNeighborsClassifier, self).fit(X, y)
 
     def predict(self, X):
-        print("Predicting data with shape: ", X.shape)
+        print("Testing data QRS detection...shape", X.shape)
         sys.stdout.flush()
-        if self.n_neighbors == 1 and self.accuracy == 'window':
-            self.accuracy = 1
-            return knn(
-                self.train,
-                self.train_labels,
-                X,
-                self.radius,
-                accuracy=self.accuracy)
-        else:
-            self.metric_params = {
-                'accuracy': self.accuracy,
-                'radius': self.radius
-            }
-            return super(DTWKNeighborsClassifier, self).predict(X)
+
+        base_frequency = 250
+        proportionality = self.sampling_rate / base_frequency
+        refractory_period = round(120 * proportionality)
+        length_of_qrs = 2 * refractory_period
+        self.metric = fastdtwQRS
+        self.metric_params = {
+            'radius': self.radius,
+            'length_of_qrs': length_of_qrs
+        }
+        X, _ = transform_data(X, None, self.QRSList, self.sampling_rate)
+
+        print("Transformed testing data:", X.shape)
+        print("Starting prediction...")
+        sys.stdout.flush()
+        return super(DTWKNeighborsClassifier, self).predict(X)
 
     def score(self, X, y):
         return scorer(self, X, y)

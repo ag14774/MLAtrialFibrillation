@@ -1,6 +1,5 @@
 import sys
 
-import numpy as np
 import scipy
 import scipy.signal
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -23,7 +22,7 @@ class CutTimeSeries(BaseEstimator, TransformerMixin):
         check_is_fitted(self, ["t"])
         print("Shape before cutting: ", X.shape)
         X = check_array(X)
-        X = X[:, 0:self.t]
+        X = X[:, 100:self.t+100]
         print("Shape after cutting: ", X.shape)
         sys.stdout.flush()
         return X
