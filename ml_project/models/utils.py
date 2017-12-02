@@ -280,6 +280,10 @@ def extract_qrs(s, qrss, sampling_rate=300):
     length_of_qrs = 2 * refractory_period
     peaks, _ = detect_qrs(s, sampling_rate)
     # print(peaks)
+    if(qrss[-1] >= len(peaks)):
+        print("Failsafe enabled...")
+        sys.stdout.flush()
+        qrss.fill(0)
     result = np.empty((len(qrss), length_of_qrs), dtype=np.float32)
     for i in range(len(qrss)):
         qrorder = qrss[i]
