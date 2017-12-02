@@ -328,8 +328,11 @@ def transform_data(X, y, QRSList=None, random_state=None, sampling_rate=300):
     proportionality = sampling_rate / base_frequency
     refractory_period = round(120 * proportionality)
     length_of_qrs = 2 * refractory_period
-    Xnew = np.empty(
-        (X.shape[0], length_of_qrs * len(QRSList)), dtype=np.float32)
+    if QRSList is None:
+        Xnew = np.empty((X.shape[0], length_of_qrs), dtype=np.float32)
+    else:
+        Xnew = np.empty(
+            (X.shape[0], length_of_qrs * len(QRSList)), dtype=np.float32)
     for i, sample in enumerate(X):
         # print(i)
         if QRSList is None:
