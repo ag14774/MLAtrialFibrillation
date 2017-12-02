@@ -48,6 +48,7 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
         self.sampling_rate = sampling_rate
 
     def fit(self, X, y):
+        self.QRSList = np.array(self.QRSList)
         print("Training data QRS detection...shape:", X.shape)
         sys.stdout.flush()
         X, y = transform_data(X, y, self.QRSList, self.sampling_rate)
@@ -56,6 +57,7 @@ class DTWKNeighborsClassifier(KNeighborsClassifier):
         return super(DTWKNeighborsClassifier, self).fit(X, y)
 
     def predict(self, X):
+        self.QRSList = np.array(self.QRSList)
         print("Testing data QRS detection...shape", X.shape)
         sys.stdout.flush()
 
