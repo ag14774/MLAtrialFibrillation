@@ -6,7 +6,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import scale
 from sklearn.utils.validation import check_array, check_is_fitted
 
-from ml_project.models.utils import find_best_windows
+from ml_project.models.utils import bandpass_filter, find_best_windows
 
 
 class CutTimeSeries(BaseEstimator, TransformerMixin):
@@ -22,7 +22,7 @@ class CutTimeSeries(BaseEstimator, TransformerMixin):
         check_is_fitted(self, ["t"])
         print("Shape before cutting: ", X.shape)
         X = check_array(X)
-        X = X[:, 100:self.t+100]
+        X = X[:, 100:self.t + 100]
         print("Shape after cutting: ", X.shape)
         sys.stdout.flush()
         return X
@@ -48,11 +48,20 @@ class CutBestWindow(BaseEstimator, TransformerMixin):
 class ScaleSamples(BaseEstimator, TransformerMixin):
     """docstring"""
 
+    def __init__(self, with_mean=True, with_std=True):
+        self.with_mean = with_mean
+        self.with_std = with_std
+
     def fit(self, X, y=None):
         return self
 
     def transform(self, X, y=None):
-        X = scale(X, axis=1, copy=False)
+        X = scale(
+            X,
+            axis=1,
+            with_mean=self.with_mean,
+            with_std=self.with_std,
+            copy=False)
         return X
 
 
@@ -68,6 +77,37 @@ class MedianFilter(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         for i in range(X.shape[0]):
             X[i] = scipy.signal.medfilt(X[i], kernel_size=self.kernel_size)
+        return X
+
+
+class BandpassFilter(BaseEstimator, TransformerMixin):
+    """docstring"""
+
+    def __init__(self,
+                 skip=False,
+                 lowcut=0.0,
+                 highcut=15.0,
+                 sampling_rate=300,
+                 filter_order=1):
+        self.skip = skip
+        self.lowcut = lowcut
+        self.highcut = highcut
+        self.sampling_rate = sampling_rate
+        self.filter_order = filter_order
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        if self.skip is True:
+            return X
+        for i in range(X.shape[0]):
+            X[i] = bandpass_filter(
+                X[i],
+                lowcut=self.lowcut,
+                highcut=self.highcut,
+                signal_freq=self.sampling_rate,
+                filter_order=self.filter_order)
         return X
 
 
