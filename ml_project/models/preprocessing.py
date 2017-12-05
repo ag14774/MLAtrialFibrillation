@@ -69,6 +69,8 @@ class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None):
+        print("Cutting window with max QRS:", X.shape)
+        sys.stdout.flush()
         # After process_first_only elements, other features begin
         # Treat only first process_first_only features as signal
         process_first_only = effective_process_first_only(
@@ -78,7 +80,6 @@ class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
             raise Exception(("Window size cannot be larger ",
                              "than the length of the signal"))
 
-        refractory_period = calc_refractory_period(self.sampling_rate)
         for j in range(X.shape[0]):
             if self.random_state is None:
                 random_state = check_random_state(self.random_state)
@@ -102,7 +103,10 @@ class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
             print(max_qrs, max_i)
             # plt.plot(X[j, 0:self.window_size])
             # plt.show()
-        return X[:, 0:self.window_size]
+        X = X[:, 0:self.window_size]
+        print("Cutting completed. New shape:", X.shape)
+        sys.stdout.flush()
+        return X
 
 
 class ScaleSamples(BaseEstimator, TransformerMixin):
