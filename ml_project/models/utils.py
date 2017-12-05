@@ -221,7 +221,7 @@ def detect_qrs(ecg_data_raw, signal_frequency=300):
     return qrs_peaks_indices, noise_peaks_indices
 
 
-@jit(nopython=True)
+@jit
 def isolate_qrs(s,
                 num_of_qrs=5,
                 sampling_rate=300,
