@@ -88,7 +88,6 @@ class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
                 process_first_only - self.window_size,
                 self.num_of_windows,
                 random_state=random_state)
-            print(indices_to_check.shape)
             max_i = 0
             max_qrs = 0
             for i in indices_to_check:
@@ -99,7 +98,7 @@ class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
                     max_qrs = num_of_peaks
                     max_i = i
             X[j, 0:self.window_size] = X[j, max_i:max_i + self.window_size]
-            if j % 300:
+            if j % 300 == 0:
                 print("Processing sample:", j)
                 sys.stdout.flush()
             # plt.plot(X[j, 0:self.window_size])
