@@ -20,13 +20,15 @@ class Hstack(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None):
-        print("Concatenating...")
+        print("Concatenating all features...")
         sys.stdout.flush()
         X1, X2 = check_X_tuple(X)
         if len(X2) == 0:
             newX = X1
         else:
             newX = np.hstack(X1, X2)
+        print("New shape after concatenation:", newX.shape)
+        sys.stdout.flush()
         return newX
 
 
