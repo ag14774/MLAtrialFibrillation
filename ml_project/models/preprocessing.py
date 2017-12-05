@@ -157,12 +157,12 @@ class IsolateQRS(BaseEstimator, TransformerMixin):
 
     def __init__(self,
                  num_of_qrs=5,
-                 keep_full_refractory=False,
+                 refractory_fraction=1.0,
                  scale_mode="after",
                  skip_bandpass=True,
                  sampling_rate=300):
         self.num_of_qrs = num_of_qrs
-        self.keep_full_refractory = keep_full_refractory
+        self.refractory_fraction = refractory_fraction
         self.scale_mode = str(scale_mode)
         self.skip_bandpass = skip_bandpass
         self.sampling_rate = sampling_rate
@@ -180,7 +180,7 @@ class IsolateQRS(BaseEstimator, TransformerMixin):
                 X1[0],
                 num_of_qrs=self.num_of_qrs,
                 sampling_rate=self.sampling_rate,
-                keep_full_refractory=self.keep_full_refractory,
+                refractory_fraction=self.refractory_fraction,
                 scale_mode=self.scale_mode,
                 skip_bandpass=self.skip_bandpass))
         X1new = np.empty((X1.shape[0], new_length), dtype=X1.dtype)
@@ -189,7 +189,7 @@ class IsolateQRS(BaseEstimator, TransformerMixin):
                 X1[i],
                 num_of_qrs=self.num_of_qrs,
                 sampling_rate=self.sampling_rate,
-                keep_full_refractory=self.keep_full_refractory,
+                refractory_fraction=self.refractory_fraction,
                 scale_mode=self.scale_mode,
                 skip_bandpass=self.skip_bandpass)
             if i % 300 == 0:

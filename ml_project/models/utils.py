@@ -229,7 +229,7 @@ def detect_qrs(ecg_data_raw, signal_frequency=300, skip_bandpass=False):
 def isolate_qrs(s,
                 num_of_qrs=5,
                 sampling_rate=300,
-                keep_full_refractory=False,
+                refractory_fraction=1.0,
                 skip_bandpass=False,
                 scale_mode="after"):
     # if keep_full_refractory is True
@@ -249,10 +249,7 @@ def isolate_qrs(s,
     if len(qrs_peaks) > 1:
         # First peak is sometimes not very good
         qrs_peaks = qrs_peaks[1:]
-    if keep_full_refractory:
-        width = refractory_period
-    else:
-        width = refractory_period // 2
+    width = round(refractory_period * refractory_fraction)
     # Add cleanup code to select spikes with
     # low variance only
     final_qrs_list = []
