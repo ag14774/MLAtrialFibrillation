@@ -10,8 +10,7 @@ from sklearn.utils.random import sample_without_replacement
 from sklearn.utils.validation import check_array, check_is_fitted
 
 from ml_project.models.utils import (bandpass_filter, calc_refractory_period,
-                                     detect_qrs, effective_process_first_only,
-                                     find_best_windows)
+                                     detect_qrs, effective_process_first_only)
 
 
 class CutTimeSeries(BaseEstimator, TransformerMixin):
