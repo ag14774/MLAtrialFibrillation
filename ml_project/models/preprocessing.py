@@ -20,6 +20,8 @@ class Hstack(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X, y=None):
+        print("Concatenating...")
+        sys.stdout.flush()
         X1, X2 = check_X_tuple(X)
         if len(X2) == 0:
             newX = X1
