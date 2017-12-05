@@ -8,10 +8,24 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import scale
 from sklearn.utils import check_random_state
 from sklearn.utils.random import sample_without_replacement
-from sklearn.utils.validation import check_array, check_is_fitted
+from sklearn.utils.validation import check_is_fitted
 
 from ml_project.models.utils import (bandpass_filter, check_X_tuple,
                                      detect_qrs, isolate_qrs)
+
+
+class Hstack(BaseEstimator, TransformerMixin):
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        X1, X2 = check_X_tuple(X)
+        if len(X2) == 0:
+            newX = X1
+        else:
+            newX = np.hstack(X1, X2)
+        return newX
 
 
 class CutTimeSeries(BaseEstimator, TransformerMixin):
