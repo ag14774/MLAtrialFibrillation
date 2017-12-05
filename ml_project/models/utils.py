@@ -249,11 +249,13 @@ def isolate_qrs(s,
     if len(qrs_peaks) > 1:
         # First peak is sometimes not very good
         qrs_peaks = qrs_peaks[1:]
-    final_qrs_list = []
     if keep_full_refractory:
         width = refractory_period
     else:
         width = refractory_period // 2
+    # Add cleanup code to select spikes with
+    # low variance only
+    final_qrs_list = []
     while len(final_qrs_list) < num_of_qrs:
         index_of_element_to_add = len(final_qrs_list) % len(qrs_peaks)
         final_qrs_list.append(qrs_peaks[index_of_element_to_add])
