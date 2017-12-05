@@ -158,8 +158,13 @@ class IsolateQRS(BaseEstimator, TransformerMixin):
         sys.stdout.flush()
         # Do an example to get the length
         new_length = len(
-            isolate_qrs(X1[0], self.num_of_qrs, self.sampling_rate,
-                        self.keep_full_refractory, self.scale_mode))
+            isolate_qrs(
+                X1[0],
+                num_of_qrs=self.num_of_qrs,
+                sampling_rate=self.sampling_rate,
+                keep_full_refractory=self.keep_full_refractory,
+                scale_mode=self.scale_mode,
+                skip_bandpass=self.skip_bandpass))
         X1new = np.empty((X1.shape[0], new_length), dtype=X1.dtype)
         for i in range(X1new.shape[0]):
             X1new[i, :] = isolate_qrs(
