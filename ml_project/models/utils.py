@@ -11,12 +11,14 @@ from sklearn.utils.random import sample_without_replacement
 from numba import jit
 
 
+@jit(nopython=True)
 def calc_refractory_period(sampling_rate=300):
     base_frequency = 250
     proportionality = sampling_rate / base_frequency
     return round(120 * proportionality)
 
 
+@jit(nopython=True)
 def effective_process_first_only(sample, process_first_only=None):
     if process_first_only is None:
         return sample.shape[0]
@@ -268,6 +270,20 @@ def extract_qrs_random(s, random_state, sampling_rate=300):
     return result
 
 
+@jit(nopython=True)
+def isolate_qrs(s, num_of_qrs=5, sampling_rate=300,
+                keep_full_refractory=False):
+    # if keep_full_refractory is True
+    # we cut the full refractory_period
+    # on each side of R.
+    # if keep_full_refractory is False
+    # we cut the half refractory_period
+    # on each side
+    refractory_period = calc_refractory_period(sampling_rate)
+    qrs_peaks, _ = detect_qrs(s, sampling_rate)
+    
+
+
 def transform_data(X, y, QRSList=None, random_state=None, sampling_rate=300):
     base_frequency = 250
     proportionality = sampling_rate / base_frequency
@@ -300,30 +316,6 @@ def autocorr(x):
     r = acorr[lag - 1]
     r = np.abs(r)
     return r, lag
-
-
-def find_best_window(x, size=1000):
-    best_i = 0
-    best_r = 0
-    # best_l = 0
-    for i in range(0, len(x) - size + 1):
-        r, lag = autocorr(x[i:i + size])
-        if r >= best_r:
-            best_i = i
-            best_r = r
-            # best_l = lag
-    # print("Found best window with (r, l)=", best_r, best_l)
-    # plt.plot(x[best_i:best_i+size])
-    # plt.show()
-    return best_i
-
-
-def find_best_windows(X, size=1000):
-    for i in range(X.shape[0]):
-        print("Selecting window for:", i)
-        idx = find_best_window(X[i], size)
-        X[i, 0:size] = X[i, idx:idx + size]
-    return X[:, 0:size]
 
 
 def scorer(estimator, X, y):

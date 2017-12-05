@@ -100,7 +100,9 @@ class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
                     max_qrs = num_of_peaks
                     max_i = i
             X[j, 0:self.window_size] = X[j, max_i:max_i + self.window_size]
-            print(max_qrs, max_i)
+            if j % 300:
+                print("Processing sample:", j)
+                sys.stdout.flush()
             # plt.plot(X[j, 0:self.window_size])
             # plt.show()
         X = X[:, 0:self.window_size]
