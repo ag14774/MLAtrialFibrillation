@@ -57,7 +57,7 @@ class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
                  window_size=1000,
                  num_of_windows=300,
                  random_state=None,
-                 process_first_only=None):
+                 process_first_only=-1):
         self.window_size = window_size
         self.sampling_rate = sampling_rate
         self.process_first_only = process_first_only

@@ -19,8 +19,8 @@ def calc_refractory_period(sampling_rate=300):
 
 
 @jit(nopython=True)
-def effective_process_first_only(sample, process_first_only=None):
-    if process_first_only is None:
+def effective_process_first_only(sample, process_first_only=-1):
+    if process_first_only < 0:
         return sample.shape[0]
     return min(process_first_only, sample.shape[0])
 
@@ -281,7 +281,7 @@ def isolate_qrs(s, num_of_qrs=5, sampling_rate=300,
     # on each side
     refractory_period = calc_refractory_period(sampling_rate)
     qrs_peaks, _ = detect_qrs(s, sampling_rate)
-    
+
 
 
 def transform_data(X, y, QRSList=None, random_state=None, sampling_rate=300):
