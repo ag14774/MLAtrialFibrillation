@@ -8,7 +8,22 @@ from sklearn.preprocessing import scale
 from sklearn.utils import check_random_state
 from sklearn.utils.random import sample_without_replacement
 
+from numba import jit
 
+
+def calc_refractory_period(sampling_rate=300):
+    base_frequency = 250
+    proportionality = sampling_rate / base_frequency
+    return round(120 * proportionality)
+
+
+def effective_process_first_only(sample, process_first_only=None):
+    if process_first_only is None:
+        return sample.shape[0]
+    return min(process_first_only, sample.shape[0])
+
+
+@jit
 def bandpass_filter(data,
                     lowcut=0.0,
                     highcut=15.0,
@@ -31,6 +46,7 @@ def bandpass_filter(data,
     return y
 
 
+@jit
 def findpeaks(data, spacing=1, limit=None):
     """
     Janko Slavic peak detection algorithm and implementation.
@@ -65,6 +81,7 @@ def findpeaks(data, spacing=1, limit=None):
     return ind
 
 
+@jit
 def detect_qrs(ecg_data_raw, signal_frequency=300):
     """
     Python Offline ECG QRS Detector based on the Pan-Tomkins algorithm.
@@ -163,9 +180,9 @@ def detect_qrs(ecg_data_raw, signal_frequency=300):
     for detected_peak_index, detected_peaks_value in zip(
             detected_peaks_indices, detected_peaks_values):
 
-        try:
+        if qrs_peaks_indices.shape[0] > 0:
             last_qrs_index = qrs_peaks_indices[-1]
-        except IndexError:
+        else:
             last_qrs_index = 0
 
         # After a valid QRS complex detection, there is a 200 ms refractory
