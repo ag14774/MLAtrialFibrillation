@@ -1,6 +1,6 @@
 import sys
 
-import matplotlib.pyplot as plt
+import numpy as np
 import scipy
 import scipy.signal
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -9,8 +9,8 @@ from sklearn.utils import check_random_state
 from sklearn.utils.random import sample_without_replacement
 from sklearn.utils.validation import check_array, check_is_fitted
 
-from ml_project.models.utils import (bandpass_filter, calc_refractory_period,
-                                     detect_qrs, effective_process_first_only)
+from ml_project.models.utils import (bandpass_filter, detect_qrs,
+                                     effective_process_first_only, isolate_qrs)
 
 
 class CutTimeSeries(BaseEstimator, TransformerMixin):
@@ -27,23 +27,6 @@ class CutTimeSeries(BaseEstimator, TransformerMixin):
         print("Shape before cutting: ", X.shape)
         X = check_array(X)
         X = X[:, 100:self.t + 100]
-        print("Shape after cutting: ", X.shape)
-        sys.stdout.flush()
-        return X
-
-
-class CutBestWindow(BaseEstimator, TransformerMixin):
-    """docstring"""
-
-    def __init__(self, size=1000):
-        self.size = size
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X, y=None):
-        print("Shape before cutting: ", X.shape)
-        X = find_best_windows(X, self.size)
         print("Shape after cutting: ", X.shape)
         sys.stdout.flush()
         return X
@@ -107,6 +90,42 @@ class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
         print("Cutting completed. New shape:", X.shape)
         sys.stdout.flush()
         return X
+
+
+class IsolateQRS(BaseEstimator, TransformerMixin):
+    """docstring"""
+
+    def __init__(self,
+                 num_of_qrs=5,
+                 keep_full_refractory=False,
+                 scale_mode="after",
+                 sampling_rate=300):
+        self.num_of_qrs = num_of_qrs
+        self.keep_full_refractory = keep_full_refractory
+        self.scale_mode = str(scale_mode)
+        self.sampling_rate = sampling_rate
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        print("Isolating QRS complexes...Shape:", X.shape)
+        sys.stdout.flush()
+        # Do an example to get the length
+        new_length = len(
+            isolate_qrs(X[0], self.num_of_qrs, self.sampling_rate,
+                        self.keep_full_refractory, self.scale_mode))
+        Xnew = np.empty((X.shape[0], new_length), dtype=X.dtype)
+        for i in range(Xnew.shape[0]):
+            Xnew[i, :] = isolate_qrs(X[i], self.num_of_qrs, self.sampling_rate,
+                                     self.keep_full_refractory,
+                                     self.scale_mode)
+            if i % 300 == 0:
+                print("Isolating QRS in sample", i)
+                sys.stdout.flush()
+        print("All QRS complexes isolated..New shape:", Xnew.shape)
+        sys.stdout.flush()
+        return Xnew
 
 
 class ScaleSamples(BaseEstimator, TransformerMixin):

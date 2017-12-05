@@ -5,8 +5,6 @@ import numpy as np
 from scipy.signal import butter, lfilter
 from sklearn.metrics import f1_score
 from sklearn.preprocessing import scale
-from sklearn.utils import check_random_state
-from sklearn.utils.random import sample_without_replacement
 
 from numba import jit
 
@@ -223,88 +221,47 @@ def detect_qrs(ecg_data_raw, signal_frequency=300):
     return qrs_peaks_indices, noise_peaks_indices
 
 
-def extract_qrs(s, qrss, sampling_rate=300):
-    base_frequency = 250
-    proportionality = sampling_rate / base_frequency
-    refractory_period = round(120 * proportionality)
-    length_of_qrs = 2 * refractory_period
-    peaks, _ = detect_qrs(s, sampling_rate)
-    s = bandpass_filter(s, 0.0, 15.0, sampling_rate, 1)
-    # print(peaks)
-    if (qrss[-1] >= len(peaks)):
-        print("Failsafe enabled...")
-        sys.stdout.flush()
-        qrss = qrss.copy()
-        qrss.fill(0)
-    result = np.empty((len(qrss), length_of_qrs), dtype=np.float32)
-    for i in range(len(qrss)):
-        qrorder = qrss[i]
-        qrindex = peaks[qrorder]
-        temp = s[max(0, qrindex - refractory_period):
-                 qrindex + refractory_period]
-        temp = np.pad(temp, (length_of_qrs - len(temp)) // 2 + 1, 'median')
-        result[i, :] = temp[:length_of_qrs]
-    result = scale(result, axis=1, copy=False)
-    return result
-
-
-def extract_qrs_random(s, random_state, sampling_rate=300):
-    base_frequency = 250
-    proportionality = sampling_rate / base_frequency
-    refractory_period = round(120 * proportionality)
-    length_of_qrs = 2 * refractory_period
-    peaks, _ = detect_qrs(s, sampling_rate)
-    s = bandpass_filter(s, 0.0, 15.0, sampling_rate, 1)
-    # print(peaks)
-    random_state = check_random_state(random_state)
-    qrss = sample_without_replacement(len(peaks), 1, random_state=random_state)
-    result = np.empty((len(qrss), length_of_qrs), dtype=np.float32)
-    for i in range(len(qrss)):
-        qrorder = qrss[i]
-        qrindex = peaks[qrorder]
-        temp = s[max(0, qrindex - refractory_period):
-                 qrindex + refractory_period]
-        temp = np.pad(temp, (length_of_qrs - len(temp)) // 2 + 1, 'median')
-        result[i, :] = temp[:length_of_qrs]
-    result = scale(result, axis=1, copy=False)
-    return result
-
-
 @jit(nopython=True)
-def isolate_qrs(s, num_of_qrs=5, sampling_rate=300,
-                keep_full_refractory=False):
+def isolate_qrs(s,
+                num_of_qrs=5,
+                sampling_rate=300,
+                keep_full_refractory=False,
+                scale_mode="after"):
     # if keep_full_refractory is True
     # we cut the full refractory_period
     # on each side of R.
     # if keep_full_refractory is False
     # we cut the half refractory_period
     # on each side
+    if scale_mode == "before":
+        s = scale(s, copy=False)
     refractory_period = calc_refractory_period(sampling_rate)
     qrs_peaks, _ = detect_qrs(s, sampling_rate)
-
-
-
-def transform_data(X, y, QRSList=None, random_state=None, sampling_rate=300):
-    base_frequency = 250
-    proportionality = sampling_rate / base_frequency
-    refractory_period = round(120 * proportionality)
-    length_of_qrs = 2 * refractory_period
-    if QRSList is None:
-        Xnew = np.empty((X.shape[0], length_of_qrs), dtype=np.float32)
+    if len(qrs_peaks) > 1:
+        # First peak is sometimes not very good
+        qrs_peaks = qrs_peaks[1:]
+    final_qrs_list = []
+    if keep_full_refractory:
+        width = refractory_period
     else:
-        Xnew = np.empty(
-            (X.shape[0], length_of_qrs * len(QRSList)), dtype=np.float32)
-    for i, sample in enumerate(X):
-        # print(i)
-        if QRSList is None:
-            temp = extract_qrs_random(
-                sample, random_state, sampling_rate=sampling_rate)
-        else:
-            temp = extract_qrs(sample, QRSList, sampling_rate=sampling_rate)
-        Xnew[i, :] = np.ravel(temp)
-        # plt.plot(Xnew[i, :])
-        # plt.show()
-    return Xnew, y
+        width = refractory_period // 2
+    while len(final_qrs_list) < num_of_qrs:
+        index_of_element_to_add = len(final_qrs_list) % len(qrs_peaks)
+        final_qrs_list.append(qrs_peaks[index_of_element_to_add])
+    new_s = np.empty((num_of_qrs, 2 * width))
+    for i in range(len(final_qrs_list)):
+        qrs_index = final_qrs_list[i]
+        qrs_temp = s[max(0, qrs_index - width):qrs_index + width]
+        # In case the signal is smaller. Pad with 0s. This ensures that
+        # all QRS are always aligned
+        if len(qrs_temp) < (2 * width):
+            qrs_temp = np.pad(qrs_temp, (2 * width - len(qrs_temp)) // 2 + 1,
+                              'median')
+        new_s[i, :] = qrs_temp[:2 * width]
+    if scale_mode == "after":
+        new_s = scale(new_s, axis=1, copy=False)
+    # Flatten the array
+    return np.ravel(new_s)
 
 
 def autocorr(x):
