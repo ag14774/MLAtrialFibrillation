@@ -9,18 +9,20 @@ from sklearn.preprocessing import scale
 from numba import jit
 
 
+def check_X_tuple(X):
+    try:
+        a, b = X
+    except Exception as e:
+        a = X
+        b = np.array([])
+    return a, b
+
+
 @jit(nopython=True)
 def calc_refractory_period(sampling_rate=300):
     base_frequency = 250
     proportionality = sampling_rate / base_frequency
     return round(120 * proportionality)
-
-
-@jit(nopython=True)
-def effective_process_first_only(sample, process_first_only=-1):
-    if process_first_only < 0:
-        return sample.shape[0]
-    return min(process_first_only, sample.shape[0])
 
 
 @jit
@@ -82,7 +84,7 @@ def findpeaks(data, spacing=1, limit=None):
 
 
 @jit
-def detect_qrs(ecg_data_raw, signal_frequency=300):
+def detect_qrs(ecg_data_raw, signal_frequency=300, skip_bandpass=False):
     """
     Python Offline ECG QRS Detector based on the Pan-Tomkins algorithm.
 
@@ -151,13 +153,16 @@ def detect_qrs(ecg_data_raw, signal_frequency=300):
     noise_peaks_indices = np.array([], dtype=int)
 
     # Measurements filtering - 0-15 Hz band pass filter.
-    filtered_ecg_measurements = bandpass_filter(
-        ecg_data_raw,
-        lowcut=filter_lowcut,
-        highcut=filter_highcut,
-        signal_freq=signal_frequency,
-        filter_order=filter_order)
-    filtered_ecg_measurements[:5] = filtered_ecg_measurements[5]
+    if skip_bandpass is True:
+        filtered_ecg_measurements = ecg_data_raw.copy()
+    else:
+        filtered_ecg_measurements = bandpass_filter(
+            ecg_data_raw,
+            lowcut=filter_lowcut,
+            highcut=filter_highcut,
+            signal_freq=signal_frequency,
+            filter_order=filter_order)
+        filtered_ecg_measurements[:5] = filtered_ecg_measurements[5]
 
     # Derivative - provides QRS slope information.
     differentiated_ecg_measurements = np.ediff1d(filtered_ecg_measurements)
@@ -221,11 +226,11 @@ def detect_qrs(ecg_data_raw, signal_frequency=300):
     return qrs_peaks_indices, noise_peaks_indices
 
 
-@jit
 def isolate_qrs(s,
                 num_of_qrs=5,
                 sampling_rate=300,
                 keep_full_refractory=False,
+                skip_bandpass=False,
                 scale_mode="after"):
     # if keep_full_refractory is True
     # we cut the full refractory_period
@@ -234,9 +239,13 @@ def isolate_qrs(s,
     # we cut the half refractory_period
     # on each side
     if scale_mode == "before":
-        s = scale(s, copy=False)
+        try:
+            s = scale(s, copy=False)
+        except Exception:
+            print("Scaling causes division by 0...Skipping")
+            sys.stdout.flush()
     refractory_period = calc_refractory_period(sampling_rate)
-    qrs_peaks, _ = detect_qrs(s, sampling_rate)
+    qrs_peaks, _ = detect_qrs(s, sampling_rate, skip_bandpass=skip_bandpass)
     if len(qrs_peaks) > 1:
         # First peak is sometimes not very good
         qrs_peaks = qrs_peaks[1:]
@@ -259,7 +268,11 @@ def isolate_qrs(s,
                               'median')
         new_s[i, :] = qrs_temp[:2 * width]
     if scale_mode == "after":
-        new_s = scale(new_s, axis=1, copy=False)
+        try:
+            new_s = scale(new_s, axis=1, copy=False)
+        except Exception:
+            print("Scaling causes division by 0...Skipping")
+            sys.stdout.flush()
     # Flatten the array
     return np.ravel(new_s)
 
