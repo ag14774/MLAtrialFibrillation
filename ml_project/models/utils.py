@@ -19,6 +19,29 @@ def check_X_tuple(X):
 
 
 @jit(nopython=True)
+def findR(s, qrs_index):
+    qrs_view = s[qrs_index - 35:qrs_index + 2]
+    rindex = np.argmax(qrs_view)
+    return qrs_index - 35 + rindex
+
+
+# Use differentiation to find this
+@jit(nopython=True)
+def findQ(s, r_index):
+    q_area = s[r_index - 30:r_index + 1]
+    q_index = np.argmin(q_area)
+    return r_index - 30 + q_index
+
+
+# Use differentiation to find this
+@jit(nopython=True)
+def findS(s, r_index):
+    s_area = s[r_index:r_index + 30]
+    s_index = np.argmin(s_area)
+    return r_index + s_index
+
+
+@jit(nopython=True)
 def calc_refractory_period(sampling_rate=300):
     base_frequency = 250
     proportionality = sampling_rate / base_frequency
@@ -133,7 +156,7 @@ def detect_qrs(ecg_data_raw, signal_frequency=300, skip_bandpass=False):
     base_frequency = 250
     proportionality = signal_frequency / base_frequency
     findpeaks_spacing = round(50 * proportionality)
-    refractory_period = round(120 * proportionality)
+    refractory_period = round(120 * proportionality)  # 120 default
     integration_window = round(15 * proportionality)
 
     filter_lowcut = 0.0

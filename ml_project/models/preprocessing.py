@@ -26,7 +26,7 @@ class Hstack(BaseEstimator, TransformerMixin):
         if len(X2) == 0:
             newX = X1
         else:
-            newX = np.hstack(X1, X2)
+            newX = np.hstack((X1, X2))
         print("New shape after concatenation:", newX.shape)
         sys.stdout.flush()
         return newX
