@@ -83,7 +83,7 @@ class RandomForest(RandomForestClassifier):
                  min_weight_fraction_leaf=0.0,
                  max_features='auto',
                  max_leaf_nodes=None,
-                 min_impurity_split=None,
+                 min_impurity_split=1e-07,
                  bootstrap=True,
                  oob_score=False,
                  n_jobs=1,
