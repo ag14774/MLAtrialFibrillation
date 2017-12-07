@@ -19,33 +19,30 @@ def check_X_tuple(X):
 
 
 @jit(nopython=True)
-def findR(s, qrs_index):
-    qrs_view = s[qrs_index - 35:qrs_index + 2]
-    rindex = np.argmax(qrs_view)
-    return qrs_index - 35 + rindex
-
-
-# Use differentiation to find this
-@jit(nopython=True)
-def findQ(s, r_index):
-    q_area = s[r_index - 30:r_index + 1]
-    q_index = np.argmin(q_area)
-    return r_index - 30 + q_index
-
-
-# Use differentiation to find this
-@jit(nopython=True)
-def findS(s, r_index):
-    s_area = s[r_index:r_index + 30]
-    s_index = np.argmin(s_area)
-    return r_index + s_index
-
-
-@jit(nopython=True)
 def calc_refractory_period(sampling_rate=300):
     base_frequency = 250
     proportionality = sampling_rate / base_frequency
-    return round(120 * proportionality)
+    return round(50 * proportionality)
+
+
+@jit(nopython=True)
+def RRIntervals(qrs_indices, sampling_rate=300):
+    RR = np.diff(qrs_indices) / sampling_rate
+    return RR
+
+
+def dRR(RRs, sampling_rate=300):
+    RRs2 = np.hstack((RRs[1:].reshape(-1, 1), RRs[:len(RRs) - 1].reshape(
+        -1, 1)))
+    dRRs = np.zeros((len(RRs) - 1, 1))
+    for i in range(len(RRs2)):
+        if np.sum(RRs2[i, :] < 0.5) >= 1:
+            dRRs[i, 0] = 2 * (RRs2[i, 0] - RRs2[i, 1])
+        elif np.sum(RRs2[i, :] > 1) >= 1:
+            dRRs[i, 0] = 0.5 * (RRs2[i, 0] - RRs2[i, 1])
+        else:
+            dRRs[i, 0] = (RRs2[i, 0] - RRs2[i, 1])
+    return dRRs
 
 
 @jit
@@ -106,7 +103,7 @@ def findpeaks(data, spacing=1, limit=None):
     return ind
 
 
-@jit
+# @jit
 def detect_qrs(ecg_data_raw, signal_frequency=300, skip_bandpass=False):
     """
     Python Offline ECG QRS Detector based on the Pan-Tomkins algorithm.
@@ -156,7 +153,8 @@ def detect_qrs(ecg_data_raw, signal_frequency=300, skip_bandpass=False):
     base_frequency = 250
     proportionality = signal_frequency / base_frequency
     findpeaks_spacing = round(50 * proportionality)
-    refractory_period = round(120 * proportionality)  # 120 default
+    refractory_period = round(50 * proportionality)  # 120 default
+    possible_t_period = round(90 * proportionality)
     integration_window = round(15 * proportionality)
 
     filter_lowcut = 0.0
@@ -173,6 +171,7 @@ def detect_qrs(ecg_data_raw, signal_frequency=300, skip_bandpass=False):
 
     # Detection results.
     qrs_peaks_indices = np.array([], dtype=int)
+    qrs_peaks_values = np.array([], dtype=float)
     noise_peaks_indices = np.array([], dtype=int)
 
     # Measurements filtering - 0-15 Hz band pass filter.
@@ -225,6 +224,8 @@ def detect_qrs(ecg_data_raw, signal_frequency=300, skip_bandpass=False):
             if detected_peaks_value > threshold_value:
                 qrs_peaks_indices = np.append(qrs_peaks_indices,
                                               detected_peak_index)
+                qrs_peaks_values = np.append(qrs_peaks_values,
+                                             detected_peaks_value)
 
                 # Adjust QRS peak value used later for setting
                 # QRS-noise threshold.
@@ -246,7 +247,28 @@ def detect_qrs(ecg_data_raw, signal_frequency=300, skip_bandpass=False):
             threshold_value = (noise_peak_value) + qrs_noise_diff_weight * (
                 qrs_peak_value - noise_peak_value)
 
-    return qrs_peaks_indices, noise_peaks_indices
+    final_mask = np.ones(len(qrs_peaks_indices), dtype=bool)
+    if (qrs_peaks_indices.shape[0] > 1):
+        last_qrs_index = qrs_peaks_indices[0]
+        last_qrs_value = qrs_peaks_values[0]
+        for i in range(1, len(qrs_peaks_indices)):
+            current_qrs_index = qrs_peaks_indices[i]
+            current_qrs_value = qrs_peaks_values[i]
+            # print(current_qrs_value)
+            if (current_qrs_index - last_qrs_index <= possible_t_period):
+                if (current_qrs_value > last_qrs_value):
+                    final_mask[i - 1] = False
+                    last_qrs_index = current_qrs_index
+                    last_qrs_value = current_qrs_value
+                else:
+                    final_mask[i] = False
+            else:
+                last_qrs_index = current_qrs_index
+                last_qrs_value = current_qrs_value
+
+    # print(qrs_peaks_indices)
+    # print(qrs_peaks_indices[final_mask])
+    return qrs_peaks_indices[final_mask], noise_peaks_indices
 
 
 def isolate_qrs(s,
@@ -307,7 +329,9 @@ def autocorr(x):
     lag = np.abs(acorr).argmax() + 1
     r = acorr[lag - 1]
     r = np.abs(r)
-    return r, lag
+    # plt.plot(acorr)
+    # plt.show()
+    return r, lag, acorr
 
 
 def scorer(estimator, X, y):

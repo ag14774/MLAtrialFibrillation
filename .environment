@@ -13,3 +13,4 @@ dependencies:
     - pyyaml==3.12
     - kaggle-cli
     - numba
+    - pywt

@@ -10,11 +10,16 @@ from sklearn.utils import check_random_state
 from sklearn.utils.random import sample_without_replacement
 from sklearn.utils.validation import check_is_fitted
 
+import pywt
 from ml_project.models.utils import (bandpass_filter, check_X_tuple,
                                      detect_qrs, isolate_qrs)
 
 
 class Hstack(BaseEstimator, TransformerMixin):
+    """docstring"""
+
+    def __init__(self, keep='both'):
+        self.keep = keep
 
     def fit(self, X, y=None):
         return self
@@ -23,10 +28,15 @@ class Hstack(BaseEstimator, TransformerMixin):
         print("Concatenating all features...")
         sys.stdout.flush()
         X1, X2 = check_X_tuple(X)
-        if len(X2) == 0:
+        if self.keep == 'both':
+            if len(X2) == 0:
+                newX = X1
+            else:
+                newX = np.hstack((X1, X2))
+        elif self.keep == 'left':
             newX = X1
-        else:
-            newX = np.hstack((X1, X2))
+        elif self.keep == 'right':
+            newX = X2
         print("New shape after concatenation:", newX.shape)
         sys.stdout.flush()
         return newX
@@ -49,6 +59,55 @@ class CutTimeSeries(BaseEstimator, TransformerMixin):
         print("Shape after cutting: ", X1.shape)
         sys.stdout.flush()
         return (X1, X2)
+
+
+class DiscreteWavelets(BaseEstimator, TransformerMixin):
+    """docstring"""
+
+    def __init__(self):
+        pass
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        X1, X2 = check_X_tuple(X)
+        print("Shape before DWT: ", X1.shape)
+        cA, _ = pywt.dwt(X1[0], 'haar')
+        new_length = len(cA)
+        for i in range(X1.shape[0]):
+            cA, _ = pywt.dwt(X1[i], 'haar')
+            X1[i, 0:new_length] = cA
+        X1 = X1[:, 0:new_length]
+        print("Shape after DWT: ", X1.shape)
+        sys.stdout.flush()
+        return (X1, X2)
+
+
+class ContinuousWavelets(BaseEstimator, TransformerMixin):
+    """docstring"""
+
+    def __init__(self, start=1, end=10):
+        self.start = start
+        self.end = end
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        X1, X2 = check_X_tuple(X)
+        print("Shape before DWT: ", X1.shape)
+        cA, _ = pywt.cwt(X1[0], np.arange(self.start, self.end), 'gaus1')
+        cA = np.ravel(cA)
+        new_length = len(cA)
+        X1new = np.empty((X1.shape[0], new_length))
+        for i in range(X1.shape[0]):
+            cA, _ = pywt.cwt(X1[i], np.arange(self.start, self.end), 'gaus1')
+            cA = np.ravel(cA)
+            X1new[i, :] = cA
+        print("Shape after DWT: ", X1new.shape)
+        sys.stdout.flush()
+        return (X1new, X2)
 
 
 class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
@@ -192,6 +251,8 @@ class IsolateQRS(BaseEstimator, TransformerMixin):
                 refractory_fraction=self.refractory_fraction,
                 scale_mode=self.scale_mode,
                 skip_bandpass=self.skip_bandpass)
+            # plt.plot(X1new[i, :])
+            # plt.show()
             if i % 300 == 0:
                 print("Isolating QRS in sample", i)
                 sys.stdout.flush()
