@@ -2,6 +2,7 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy
 from scipy.signal import butter, lfilter
 from sklearn.metrics import f1_score
 from sklearn.preprocessing import scale
@@ -16,6 +17,27 @@ def check_X_tuple(X):
         a = X
         b = np.array([])
     return a, b
+
+
+@jit
+def lastNonZero(s):
+    for i in range(len(s)-1, -1, -1):
+        if s[i] != 0:
+            return i
+    return 0
+
+
+@jit
+def fixBaseline(s, sampling_rate=300):
+    small_step = round(0.2 * sampling_rate)
+    big_step = round(0.6 * sampling_rate)
+    if small_step % 2 == 0:
+        small_step = small_step + 1
+    if big_step % 2 == 0:
+        big_step = big_step + 1
+    filter1 = scipy.signal.medfilt(s, kernel_size=small_step)
+    filter2 = scipy.signal.medfilt(filter1, kernel_size=big_step)
+    return s - filter2
 
 
 @jit(nopython=True)
@@ -321,10 +343,10 @@ def isolate_qrs(s,
     return np.ravel(new_s)
 
 
-def autocorr(x):
+def autocorr(x, mode='same'):
     n = x.size
     norm = (x - np.mean(x))
-    result = np.correlate(norm, norm, mode='same')
+    result = np.correlate(norm, norm, mode=mode)
     acorr = result[n // 2 + 1:] / (x.var() * np.arange(n - 1, n // 2, -1))
     lag = np.abs(acorr).argmax() + 1
     r = acorr[lag - 1]

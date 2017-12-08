@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import scipy.signal
+from scipy.stats import signaltonoise
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import scale
 from sklearn.utils import check_random_state
@@ -11,8 +12,9 @@ from sklearn.utils.random import sample_without_replacement
 from sklearn.utils.validation import check_is_fitted
 
 import pywt
-from ml_project.models.utils import (bandpass_filter, check_X_tuple,
-                                     detect_qrs, isolate_qrs)
+from ml_project.models.utils import (lastNonZero, bandpass_filter,
+                                     check_X_tuple, detect_qrs, fixBaseline,
+                                     isolate_qrs)
 
 
 class Hstack(BaseEstimator, TransformerMixin):
@@ -143,25 +145,28 @@ class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
                 random_state = check_random_state(self.random_state)
             else:
                 random_state = check_random_state(self.random_state + j)
-            try:
-                indices_to_check = sample_without_replacement(
-                    X1.shape[1] - self.window_size,
-                    self.num_of_windows,
-                    random_state=random_state)
-            except Exception:
-                indices_to_check = sample_without_replacement(
-                    X1.shape[1] - self.window_size,
-                    X1.shape[1] - self.window_size,
-                    random_state=random_state)
+            real_shape = lastNonZero(X1[j])
+            indices_to_check = sample_without_replacement(
+                max(1, real_shape - self.window_size),
+                min(self.num_of_windows, max(1,
+                                             real_shape - self.window_size)),
+                random_state=random_state)
             max_i = 0
             max_qrs = 0
+            max_snr = -9999999
             for i in indices_to_check:
                 peaks, _ = detect_qrs(X1[j, i:i + self.window_size],
                                       self.sampling_rate)
                 num_of_peaks = len(peaks)
-                if num_of_peaks > max_qrs:
+                snr = signaltonoise(X1[j, i:i + self.window_size])
+                if num_of_peaks >= max_qrs and snr - max_snr >= -0.01:
+                    if num_of_peaks == max_qrs and snr <= max_snr:
+                        continue
                     max_qrs = num_of_peaks
                     max_i = i
+                    max_snr = snr
+                elif num_of_peaks < max_qrs and snr <= max_snr:
+                    pass
             X1[j, 0:self.window_size] = X1[j, max_i:max_i + self.window_size]
             max_qrs_array[j] = max_qrs
             if j % 300 == 0:
@@ -179,25 +184,26 @@ class CutWindowWithMaxQRS(BaseEstimator, TransformerMixin):
             else:
                 random_state = check_random_state(self.random_state + j)
             new_window_size = self.window_size // 2
-            try:
-                indices_to_check = sample_without_replacement(
-                    X1.shape[1] - new_window_size,
-                    self.num_of_windows,
-                    random_state=random_state)
-            except Exception:
-                indices_to_check = sample_without_replacement(
-                    X1.shape[1] - new_window_size,
-                    X1.shape[1] - new_window_size,
-                    random_state=random_state)
+            indices_to_check = sample_without_replacement(
+                X1.shape[1] - new_window_size,
+                min(self.num_of_windows, X1.shape[1] - new_window_size),
+                random_state=random_state)
             max_i = 0
             max_qrs = 0
+            max_snr = -99999
             for i in indices_to_check:
                 peaks, _ = detect_qrs(X1[j, i:i + new_window_size],
                                       self.sampling_rate)
                 num_of_peaks = len(peaks)
-                if num_of_peaks > max_qrs:
+                snr = signaltonoise(X1[j, i:i + new_window_size])
+                if num_of_peaks >= max_qrs and snr - max_snr >= -0.01:
+                    if num_of_peaks == max_qrs and snr <= max_snr:
+                        continue
                     max_qrs = num_of_peaks
                     max_i = i
+                    max_snr = snr
+                elif num_of_peaks < max_qrs and snr <= max_snr:
+                    pass
             # if a smaller window size leads to
             # more QRS complexes then use that
             # two times
@@ -320,6 +326,29 @@ class MedianFilter(BaseEstimator, TransformerMixin):
         X1, X2 = check_X_tuple(X)
         for i in range(X1.shape[0]):
             X1[i] = scipy.signal.medfilt(X1[i], kernel_size=self.kernel_size)
+        return (X1, X2)
+
+
+class BaseLineWanderFix(BaseEstimator, TransformerMixin):
+    """docstring"""
+
+    def __init__(self, sampling_rate=300):
+        self.sampling_rate = sampling_rate
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        print("Fixing baseline wander...")
+        sys.stdout.flush()
+        X1, X2 = check_X_tuple(X)
+        for i in range(X1.shape[0]):
+            X1[i] = fixBaseline(X1[i], sampling_rate=self.sampling_rate)
+            if i % 300 == 0:
+                print("Processing sample:", i)
+                sys.stdout.flush()
+        print("Baseline fixed...")
+        sys.stdout.flush()
         return (X1, X2)
 
 
