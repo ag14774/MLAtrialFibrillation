@@ -12,9 +12,9 @@ from sklearn.utils.random import sample_without_replacement
 from sklearn.utils.validation import check_is_fitted
 
 import pywt
-from ml_project.models.utils import (lastNonZero, bandpass_filter,
-                                     check_X_tuple, detect_qrs, fixBaseline,
-                                     isolate_qrs)
+from ml_project.models.utils import (bandpass_filter, check_X_tuple,
+                                     detect_qrs, fixBaseline, isolate_qrs,
+                                     lastNonZero)
 
 
 class Hstack(BaseEstimator, TransformerMixin):
@@ -41,6 +41,7 @@ class Hstack(BaseEstimator, TransformerMixin):
             newX = X2
         print("New shape after concatenation:", newX.shape)
         sys.stdout.flush()
+        newX = np.nan_to_num(newX, copy=False)
         return newX
 
 

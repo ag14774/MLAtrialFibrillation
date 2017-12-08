@@ -7,6 +7,8 @@ from scipy.signal import butter, lfilter
 from sklearn.metrics import f1_score
 from sklearn.preprocessing import scale
 
+from biosppy import utils
+from biosppy.signals import ecg, tools
 from numba import jit
 
 
@@ -21,10 +23,127 @@ def check_X_tuple(X):
 
 @jit
 def lastNonZero(s):
-    for i in range(len(s)-1, -1, -1):
+    for i in range(len(s) - 1, -1, -1):
         if s[i] != 0:
             return i
     return 0
+
+
+def biosspyX(X, sampling_rate=300, show=False, verbose=True):
+    data = []
+    for i, x in enumerate(X):
+        data.append(ecg.ecg(x, sampling_rate, show))
+        if verbose:
+            if i % 300 == 0:
+                print("Analysing sample ", i, "...Please wait...")
+                sys.stdout.flush()
+    return data
+
+
+def signal_stats(signal):
+    try:
+        return tools.signal_stats(signal)
+    except Exception:
+        args = (0, 0, 0, 0, 0, 0, 0, 0)
+        names = ('mean', 'median', 'max', 'var', 'std_dev', 'abs_dev',
+                 'kurtosis', 'skewness')
+
+        return utils.ReturnTuple(args, names)
+
+
+def extract_data(biooutput, sampling_rate=300, min_length=200):
+    filtered_signal = biooutput["filtered"]
+    median_template = np.median(biooutput["templates"], axis=0)
+    mean_template = np.mean(biooutput["templates"], axis=0)
+
+    median_template_stats = signal_stats(median_template)
+    mean_template_stats = signal_stats(mean_template)
+    heartrate_stats = signal_stats(biooutput["heart_rate"])
+
+    peak_values = filtered_signal[biooutput["rpeaks"]]
+    peak_stats = signal_stats(peak_values)
+
+    new_median_template = np.empty((min_length))
+    new_median_template[:len(median_template)] = median_template
+    new_mean_template = np.empty((min_length))
+    new_mean_template[:len(mean_template)] = mean_template
+    if len(median_template) < min_length:
+        new_median_template = np.pad(
+            median_template,
+            round((min_length - len(median_template)) / 2),
+            mode='median')[:min_length]
+        new_mean_template = np.pad(
+            mean_template,
+            round((min_length - len(mean_template)) / 2),
+            mode='mean')[:min_length]
+
+    return (filtered_signal, new_median_template, new_mean_template,
+            median_template_stats, mean_template_stats, heartrate_stats,
+            peak_stats)
+
+
+def template_min_length(data):
+    maxlength = 0
+    for x in data:
+        length = x["templates"].shape[1]
+        if length > maxlength:
+            maxlength = length
+    return maxlength
+
+
+def featurevector(processed_signal, sampling_rate=300, min_length=200):
+    results = extract_data(
+        processed_signal, sampling_rate=sampling_rate, min_length=200)
+    filtered_signal = results[0]
+    median_template = results[1]
+    mean_template = results[2]
+    median_template_stats = results[3]
+    mean_template_stats = results[4]
+    heartrate_stats = results[5]
+    peak_stats = results[6]
+
+    features = np.empty((len(median_template) + len(mean_template) + 4*8))
+    offset = len(median_template)
+    features[:offset] = median_template
+    features[offset:offset+offset] = mean_template
+
+    features[offset+offset + 0] = median_template_stats["mean"]
+    features[offset+offset + 1] = median_template_stats["median"]
+    features[offset+offset + 2] = median_template_stats["max"]
+    features[offset+offset + 3] = median_template_stats["var"]
+    features[offset+offset + 4] = median_template_stats["std_dev"]
+    features[offset+offset + 5] = median_template_stats["abs_dev"]
+    features[offset+offset + 6] = median_template_stats["kurtosis"]
+    features[offset+offset + 7] = median_template_stats["skewness"]
+
+    features[offset+offset + 8] = mean_template_stats["mean"]
+    features[offset+offset + 9] = mean_template_stats["median"]
+    features[offset+offset + 10] = mean_template_stats["max"]
+    features[offset+offset + 11] = mean_template_stats["var"]
+    features[offset+offset + 12] = mean_template_stats["std_dev"]
+    features[offset+offset + 13] = mean_template_stats["abs_dev"]
+    features[offset+offset + 14] = mean_template_stats["kurtosis"]
+    features[offset+offset + 15] = mean_template_stats["skewness"]
+
+    features[offset+offset + 16] = heartrate_stats["mean"]
+    features[offset+offset + 17] = heartrate_stats["median"]
+    features[offset+offset + 18] = heartrate_stats["max"]
+    features[offset+offset + 19] = heartrate_stats["var"]
+    features[offset+offset + 20] = heartrate_stats["std_dev"]
+    features[offset+offset + 21] = heartrate_stats["abs_dev"]
+    features[offset+offset + 22] = heartrate_stats["kurtosis"]
+    features[offset+offset + 23] = heartrate_stats["skewness"]
+
+    features[offset+offset + 24] = peak_stats["mean"]
+    features[offset+offset + 25] = peak_stats["median"]
+    features[offset+offset + 26] = peak_stats["max"]
+    features[offset+offset + 27] = peak_stats["var"]
+    features[offset+offset + 28] = peak_stats["std_dev"]
+    features[offset+offset + 29] = peak_stats["abs_dev"]
+    features[offset+offset + 30] = peak_stats["kurtosis"]
+    features[offset+offset + 31] = peak_stats["skewness"]
+
+    return filtered_signal, features
 
 
 @jit
@@ -53,18 +172,105 @@ def RRIntervals(qrs_indices, sampling_rate=300):
     return RR
 
 
-def dRR(RRs, sampling_rate=300):
-    RRs2 = np.hstack((RRs[1:].reshape(-1, 1), RRs[:len(RRs) - 1].reshape(
-        -1, 1)))
-    dRRs = np.zeros((len(RRs) - 1, 1))
-    for i in range(len(RRs2)):
-        if np.sum(RRs2[i, :] < 0.5) >= 1:
-            dRRs[i, 0] = 2 * (RRs2[i, 0] - RRs2[i, 1])
-        elif np.sum(RRs2[i, :] > 1) >= 1:
-            dRRs[i, 0] = 0.5 * (RRs2[i, 0] - RRs2[i, 1])
-        else:
-            dRRs[i, 0] = (RRs2[i, 0] - RRs2[i, 1])
-    return dRRs
+# def compute_dRR(RRs, sampling_rate=300):
+#     RRs2 = np.hstack((RRs[1:].reshape(-1, 1), RRs[:len(RRs) - 1].reshape(
+#         -1, 1)))
+#     dRRs = np.zeros((len(RRs) - 1, 1))
+#     for i in range(len(RRs2)):
+#         if np.sum(RRs2[i, :] < 0.5) >= 1:
+#             dRRs[i, 0] = 2 * (RRs2[i, 0] - RRs2[i, 1])
+#         elif np.sum(RRs2[i, :] > 1) >= 1:
+#             dRRs[i, 0] = 0.5 * (RRs2[i, 0] - RRs2[i, 1])
+#         else:
+#             dRRs[i, 0] = (RRs2[i, 0] - RRs2[i, 1])
+#     return dRRs
+
+# def BPcount(sZ):
+#     bdc = 0
+#     BC = 0
+#     pdc = 0
+#     PC = 0
+#     for i in range(-2, 3):
+#         bdc = np.sum(np.diag(sZ, i) != 0, axis=0)
+#         pdc = np.sum(np.diag(sZ, i), axis=0)
+#         BC = BC + bdc
+#         PC = PC + pdc
+#         sZ = sZ - np.diag(np.diag(sZ, i), i)
+#     return BC, PC, sZ
+
+# def metrics(dRR):
+#     dRR = np.hstack((dRR[1:len(dRR)], dRR[0:len(dRR) - 1]))
+#     OCmask = 0.02
+#     os = np.sum(np.abs(dRR) <= OCmask, axis=1)
+#     OriginCount = np.sum(os == 2, axis=0)
+#     OLmask = 1.5
+#     dRRnew = np.array([]).reshape(-1, dRR.shape[1])
+#     for i in range(dRR.shape[0]):
+#         if np.sum(np.abs(dRR[i, :]) >= OLmask, axis=0) == 0:
+#             dRRnew = np.vstack((dRRnew, dRR[i, :]))
+#     if len(dRRnew) == 0:
+#         dRRnew = np.array([0, 0]).reshape(-1, dRR.shape[1])
+#     print(dRRnew)
+#     bin_c = np.arange(-0.58, 0.621, 0.04)
+#     Z, _ = np.histogramdd(dRRnew, [bin_c, bin_c])
+#     print(Z)
+#
+#     Z[13, 14:16] = 0
+#     Z[14:16, 13:17] = 0
+#     Z[16, 14:16] = 0
+#
+#     Z2 = Z[15:30, 15:30]
+#     BC12, PC12, sZ2 = BPcount(Z2)
+#     Z[15:30, 15:30] = sZ2
+#
+#     Z3 = Z[15:30, 0:15]
+#     Z3 = np.fliplr(Z3)
+#     BC11, PC11, sZ3 = BPcount(Z3)
+#     Z[15:30, 0:15] = np.fliplr(sZ3)
+#
+#     Z4 = Z[0:15, 0:15]
+#     BC10, PC10, sZ4 = BPcount(Z4)
+#     Z[0:15, 0:15] = sZ4
+#
+#     Z1 = Z[0:15, 15:30]
+#     Z1 = np.fliplr(Z1)
+#     BC9, PC9, sZ1 = BPcount(Z1)
+#     Z[0:15, 15:30] = np.fliplr(sZ1)
+#
+#     BC5 = np.sum(np.sum(Z[0:15, 13:17] != 0, axis=0), axis=0)
+#     PC5 = np.sum(np.sum(Z[0:15, 13:17], axis=0), axis=0)
+#
+#     BC7 = np.sum(np.sum(Z[15:30, 13:17] != 0, axis=0), axis=0)
+#     PC7 = np.sum(np.sum(Z[15:30, 13:17], axis=0), axis=0)
+#
+#     BC6 = np.sum(np.sum(Z[13:17, 0:15] != 0, axis=0), axis=0)
+#     PC6 = np.sum(np.sum(Z[13:17, 0:15], axis=0), axis=0)
+#
+#     BC8 = np.sum(np.sum(Z[13:17, 15:30] != 0, axis=0), axis=0)
+#     PC8 = np.sum(np.sum(Z[13:17, 15:30], axis=0), axis=0)
+#
+#     Z[13:17, :] = 0
+#     Z[:, 13:17] = 0
+#
+#     BC2 = np.sum(np.sum(Z[0:13, 0:13] != 0, axis=0), axis=0)
+#     PC2 = np.sum(np.sum(Z[0:13, 0:13], axis=0), axis=0)
+#
+#     BC1 = np.sum(np.sum(Z[0:13, 17:30] != 0, axis=0), axis=0)
+#     PC1 = np.sum(np.sum(Z[0:13, 17:30], axis=0), axis=0)
+#
+#     BC3 = np.sum(np.sum(Z[17:30, 0:13] != 0, axis=0), axis=0)
+#     PC3 = np.sum(np.sum(Z[17:30, 0:13], axis=0), axis=0)
+#
+#     BC4 = np.sum(np.sum(Z[17:30, 17:30] != 0, axis=0), axis=0)
+#     PC4 = np.sum(np.sum(Z[17:30, 17:30], axis=0), axis=0)
+#
+#     IrrEv = (BC1 + BC2 + BC3 + BC4 + BC5 + BC6 + BC7 + BC8 + BC9 + BC10 +
+#              BC11 + BC12)
+#     PACEv = (PC1 - BC1) + (PC2 - BC2) + (PC3 - BC3) + (PC4 - BC4) + (
+#         PC5 - BC5) + (PC6 - BC6) + (PC10 - BC10) - (PC7 - BC7) - (
+#             PC8 - BC8) - (PC12 - BC12)
+#
+#     return OriginCount, IrrEv, PACEv
 
 
 @jit

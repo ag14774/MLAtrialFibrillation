@@ -14,3 +14,4 @@ dependencies:
     - kaggle-cli
     - numba
     - pywt
+    - biosppy
