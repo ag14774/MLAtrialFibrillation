@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.svm import SVC
 from sklearn.utils.validation import check_array, check_is_fitted
 
@@ -118,6 +118,36 @@ class RandomForest(RandomForestClassifier):
         print("Predicting data with shape", X.shape)
         sys.stdout.flush()
         return super(RandomForest, self).predict(X)
+
+    def score(self, X, y):
+        return scorer(self, X, y)
+
+
+class AdaBoost(AdaBoostClassifier):
+    """docstring"""
+
+    def __init__(self,
+                 base_estimator=None,
+                 n_estimators=50,
+                 learning_rate=1.0,
+                 algorithm='SAMME.R',
+                 random_state=None):
+        super(AdaBoost, self).__init__(
+            base_estimator=base_estimator,
+            n_estimators=n_estimators,
+            learning_rate=learning_rate,
+            algorithm=algorithm,
+            random_state=random_state)
+
+    def fit(self, X, y=None):
+        print("Fitting ada boost on data with shape", X.shape)
+        sys.stdout.flush()
+        return super(AdaBoost, self).fit(X, y)
+
+    def predict(self, X, y=None):
+        print("Predicting data with shape", X.shape)
+        sys.stdout.flush()
+        return super(AdaBoost, self).predict(X)
 
     def score(self, X, y):
         return scorer(self, X, y)
