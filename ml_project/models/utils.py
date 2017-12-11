@@ -32,7 +32,7 @@ def lastNonZero(s):
 def biosspyX(X, sampling_rate=300, show=False, verbose=True):
     data = []
     for i, x in enumerate(X):
-        data.append(ecg.ecg(x, sampling_rate, show))
+        data.append(ecg.ecg(x, sampling_rate=sampling_rate, show=show))
         if verbose:
             if i % 300 == 0:
                 print("Analysing sample ", i, "...Please wait...")
@@ -51,97 +51,75 @@ def signal_stats(signal):
         return utils.ReturnTuple(args, names)
 
 
-def extract_data(biooutput, sampling_rate=300, min_length=200):
+def extract_data(biooutput, sampling_rate=300):
     filtered_signal = biooutput["filtered"]
     median_template = np.median(biooutput["templates"], axis=0)
     mean_template = np.mean(biooutput["templates"], axis=0)
+    std_template = np.std(biooutput["templates"], axis=0)
+    if len(median_template) == 0:
+        median_template = np.zeros((0.6 * sampling_rate))
+        mean_template = np.zeros((0.6 * sampling_rate))
+        std_template = np.zeros((0.6 * sampling_rate))
+
+    if len(biooutput["heart_rate"]) == 0:
+        heart_rate = [0]
+    else:
+        heart_rate = biooutput["heart_rate"]
+
+    if len(biooutput["rpeaks"]) == 0:
+        rpeaks = [0]
+    else:
+        rpeaks = biooutput["rpeaks"]
 
     median_template_stats = signal_stats(median_template)
     mean_template_stats = signal_stats(mean_template)
-    heartrate_stats = signal_stats(biooutput["heart_rate"])
+    heartrate_stats = signal_stats(heart_rate)
 
-    peak_values = filtered_signal[biooutput["rpeaks"]]
+    peak_values = filtered_signal[rpeaks]
     peak_stats = signal_stats(peak_values)
 
-    new_median_template = np.empty((min_length))
-    new_median_template[:len(median_template)] = median_template
-    new_mean_template = np.empty((min_length))
-    new_mean_template[:len(mean_template)] = mean_template
-    if len(median_template) < min_length:
-        new_median_template = np.pad(
-            median_template,
-            round((min_length - len(median_template)) / 2),
-            mode='median')[:min_length]
-        new_mean_template = np.pad(
-            mean_template,
-            round((min_length - len(mean_template)) / 2),
-            mode='mean')[:min_length]
+    heartrate_percentiles = np.percentile(heart_rate,
+                                          [5, 15, 25, 35, 65, 75, 85, 95])
+    peaks_percentiles = np.percentile(rpeaks, [5, 15, 25, 35, 65, 75, 85, 95])
+    median_template_percentiles = np.percentile(
+        median_template, [5, 15, 25, 35, 65, 75, 85, 95])
+    mean_template_percentiles = np.percentile(mean_template,
+                                              [5, 15, 25, 35, 65, 75, 85, 95])
 
-    return (filtered_signal, new_median_template, new_mean_template,
+    return (filtered_signal, median_template, mean_template, std_template,
+            heartrate_percentiles, peaks_percentiles,
+            median_template_percentiles, mean_template_percentiles,
             median_template_stats, mean_template_stats, heartrate_stats,
             peak_stats)
 
 
-def template_min_length(data):
-    maxlength = 0
-    for x in data:
-        length = x["templates"].shape[1]
-        if length > maxlength:
-            maxlength = length
-    return maxlength
-
-
-def featurevector(processed_signal, sampling_rate=300, min_length=200):
-    results = extract_data(
-        processed_signal, sampling_rate=sampling_rate, min_length=200)
+def featurevector(processed_signal, sampling_rate=300):
+    results = extract_data(processed_signal, sampling_rate=sampling_rate)
     filtered_signal = results[0]
     median_template = results[1]
     mean_template = results[2]
-    median_template_stats = results[3]
-    mean_template_stats = results[4]
-    heartrate_stats = results[5]
-    peak_stats = results[6]
+    std_template = results[3]
+    heartrate_percentiles = results[4]
+    peaks_percentiles = results[5]
+    median_template_percentiles = results[6]
+    mean_template_percentiles = results[7]
+    median_template_stats = list(results[8].as_dict().values())
+    mean_template_stats = list(results[9].as_dict().values())
+    heartrate_stats = list(results[10].as_dict().values())
+    peak_stats = list(results[11].as_dict().values())
 
-    features = np.empty((len(median_template) + len(mean_template) + 4*8))
-    offset = len(median_template)
-    features[:offset] = median_template
-    features[offset:offset+offset] = mean_template
-
-    features[offset+offset + 0] = median_template_stats["mean"]
-    features[offset+offset + 1] = median_template_stats["median"]
-    features[offset+offset + 2] = median_template_stats["max"]
-    features[offset+offset + 3] = median_template_stats["var"]
-    features[offset+offset + 4] = median_template_stats["std_dev"]
-    features[offset+offset + 5] = median_template_stats["abs_dev"]
-    features[offset+offset + 6] = median_template_stats["kurtosis"]
-    features[offset+offset + 7] = median_template_stats["skewness"]
-
-    features[offset+offset + 8] = mean_template_stats["mean"]
-    features[offset+offset + 9] = mean_template_stats["median"]
-    features[offset+offset + 10] = mean_template_stats["max"]
-    features[offset+offset + 11] = mean_template_stats["var"]
-    features[offset+offset + 12] = mean_template_stats["std_dev"]
-    features[offset+offset + 13] = mean_template_stats["abs_dev"]
-    features[offset+offset + 14] = mean_template_stats["kurtosis"]
-    features[offset+offset + 15] = mean_template_stats["skewness"]
-
-    features[offset+offset + 16] = heartrate_stats["mean"]
-    features[offset+offset + 17] = heartrate_stats["median"]
-    features[offset+offset + 18] = heartrate_stats["max"]
-    features[offset+offset + 19] = heartrate_stats["var"]
-    features[offset+offset + 20] = heartrate_stats["std_dev"]
-    features[offset+offset + 21] = heartrate_stats["abs_dev"]
-    features[offset+offset + 22] = heartrate_stats["kurtosis"]
-    features[offset+offset + 23] = heartrate_stats["skewness"]
-
-    features[offset+offset + 24] = peak_stats["mean"]
-    features[offset+offset + 25] = peak_stats["median"]
-    features[offset+offset + 26] = peak_stats["max"]
-    features[offset+offset + 27] = peak_stats["var"]
-    features[offset+offset + 28] = peak_stats["std_dev"]
-    features[offset+offset + 29] = peak_stats["abs_dev"]
-    features[offset+offset + 30] = peak_stats["kurtosis"]
-    features[offset+offset + 31] = peak_stats["skewness"]
+    features = np.array([])
+    features = np.append(features, median_template)
+    features = np.append(features, mean_template)
+    features = np.append(features, std_template)
+    features = np.append(features, heartrate_percentiles)
+    features = np.append(features, peaks_percentiles)
+    features = np.append(features, median_template_percentiles)
+    features = np.append(features, mean_template_percentiles)
+    features = np.append(features, median_template_stats)
+    features = np.append(features, mean_template_stats)
+    features = np.append(features, heartrate_stats)
+    features = np.append(features, peak_stats)
 
     return filtered_signal, features
 

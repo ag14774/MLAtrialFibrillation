@@ -5,7 +5,6 @@ from scipy.stats import signaltonoise
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from ml_project.models.utils import (autocorr, biosspyX, check_X_tuple,
-                                     extract_data, template_min_length,
                                      featurevector)
 
 
@@ -23,19 +22,12 @@ class ExtractFeatures(BaseEstimator, TransformerMixin):
         processed = biosspyX(
             X1, sampling_rate=self.sampling_rate, show=False, verbose=True)
 
-        template_length = template_min_length(processed)
-        _, temp = featurevector(
-            processed[0],
-            sampling_rate=self.sampling_rate,
-            min_length=template_length)
+        _, temp = featurevector(processed[0], sampling_rate=self.sampling_rate)
         new_length = len(temp)
-        print(template_length, new_length)
         all_features = np.empty((X1.shape[0], new_length))
         for i in range(X1.shape[0]):
             filtered_signal, features = featurevector(
-                processed[i],
-                sampling_rate=self.sampling_rate,
-                min_length=template_length)
+                processed[i], sampling_rate=self.sampling_rate)
 
             assert all_features.shape[1] == len(features)
             all_features[i, :] = features
