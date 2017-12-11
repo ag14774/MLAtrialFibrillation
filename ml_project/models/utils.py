@@ -51,6 +51,10 @@ def signal_stats(signal):
         return utils.ReturnTuple(args, names)
 
 
+#function that takes segmented function as input and does
+#what ecg does
+
+
 def extract_data(biooutput, sampling_rate=300):
     filtered_signal = biooutput["filtered"]
     median_template = np.median(biooutput["templates"], axis=0)
