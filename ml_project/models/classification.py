@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.utils.validation import check_array, check_is_fitted
 
