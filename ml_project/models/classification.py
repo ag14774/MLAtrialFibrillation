@@ -2,7 +2,8 @@ import sys
 
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.ensemble import AdaBoostClassifier, RandomForestClassifier
+from sklearn.ensemble import (AdaBoostClassifier, GradientBoostingClassifier,
+                              RandomForestClassifier)
 from sklearn.svm import SVC
 from sklearn.utils.validation import check_array, check_is_fitted
 
@@ -148,6 +149,60 @@ class AdaBoost(AdaBoostClassifier):
         print("Predicting data with shape", X.shape)
         sys.stdout.flush()
         return super(AdaBoost, self).predict(X)
+
+    def score(self, X, y):
+        return scorer(self, X, y)
+
+
+class GradientBoosting(GradientBoostingClassifier):
+    """docstring"""
+
+    def __init__(self,
+                 loss='deviance',
+                 learning_rate=0.1,
+                 n_estimators=100,
+                 subsample=1.0,
+                 criterion='friedman_mse',
+                 min_samples_split=2,
+                 min_samples_leaf=1,
+                 min_weight_fraction_leaf=0.,
+                 max_depth=3,
+                 min_impurity_split=1e-7,
+                 init=None,
+                 random_state=None,
+                 max_features=None,
+                 verbose=0,
+                 max_leaf_nodes=None,
+                 warm_start=False,
+                 presort='auto'):
+        super(GradientBoosting, self).__init__(
+            loss=loss,
+            learning_rate=learning_rate,
+            n_estimators=n_estimators,
+            criterion=criterion,
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            min_weight_fraction_leaf=min_weight_fraction_leaf,
+            max_depth=max_depth,
+            init=init,
+            subsample=subsample,
+            max_features=max_features,
+            random_state=random_state,
+            verbose=verbose,
+            max_leaf_nodes=max_leaf_nodes,
+            min_impurity_split=min_impurity_split,
+            warm_start=warm_start,
+            presort=presort)
+
+    def fit(self, X, y=None):
+        print("Fitting gradient boosting on data with shape", X.shape)
+        sys.stdout.flush()
+        return super(GradientBoosting, self).fit(X, y)
+
+    def predict(self, X, y=None):
+        print("Predicting data with shape", X.shape)
+        sys.stdout.flush()
+        return super(GradientBoosting, self).predict(X)
 
     def score(self, X, y):
         return scorer(self, X, y)
