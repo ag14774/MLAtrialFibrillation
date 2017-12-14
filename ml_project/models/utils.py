@@ -6,6 +6,7 @@ import scipy
 from scipy.ndimage.filters import gaussian_filter
 from scipy.signal import argrelmax, butter, lfilter
 from scipy.stats import stats
+from sklearn.utils.random import sample_without_replacement
 from sklearn.metrics import f1_score
 
 from biosppy import plotting, utils
@@ -242,6 +243,7 @@ def extract_data(biooutput, sampling_rate=300):
     # plt.plot(median_template)
     mean_template = np.mean(biooutput["templates"], axis=0)
     std_template = np.std(biooutput["templates"], axis=0)
+
     # plt.plot(std_template)
     # plt.show()
     if len(median_template) == 0:
@@ -298,10 +300,10 @@ def featurevector(processed_signal, sampling_rate=300):
 
     features = np.array([])
     features = np.append(features, median_template)
-    features = np.append(features, mean_template)
+    # features = np.append(features, mean_template)
     features = np.append(features, std_template)
     features = np.append(features, heartrate_percentiles)
-    # features = np.append(features, peaks_percentiles)
+    features = np.append(features, peaks_percentiles)
     # features = np.append(features, median_template_percentiles)
     # features = np.append(features, mean_template_percentiles)
     features = np.append(features, median_template_stats)
