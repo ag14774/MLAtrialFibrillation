@@ -1,7 +1,6 @@
 import sys
 
 import numpy as np
-from scipy.stats import signaltonoise
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from ml_project.models.utils import (autocorr, biosspyX, check_X_tuple,
@@ -39,24 +38,6 @@ class ExtractFeatures(BaseEstimator, TransformerMixin):
 
         X2 = X2.reshape(X1.shape[0], -1)
         X2 = np.hstack((X2, all_features))
-        return (X1, X2)
-
-
-class SignalToNoiseRatio(BaseEstimator, TransformerMixin):
-    """docstring"""
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X, y=None):
-        print("Calculating signal to noise ratio...")
-        sys.stdout.flush()
-        X1, X2 = check_X_tuple(X)
-        X2 = X2.reshape(X1.shape[0], -1)
-        snr = signaltonoise(X1, axis=1)
-        snr = snr.reshape(X1.shape[0], -1)
-        X2 = np.hstack((X2, snr))
-        X2 = X2.reshape(X1.shape[0], -1)
         return (X1, X2)
 
 

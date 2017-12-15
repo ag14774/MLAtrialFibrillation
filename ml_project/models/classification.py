@@ -9,6 +9,7 @@ from sklearn.svm import SVC
 from sklearn.utils.validation import check_array, check_is_fitted
 
 from ml_project.models.utils import scorer
+from xgboost import XGBClassifier
 
 
 class MeanPredictor(BaseEstimator, TransformerMixin):
@@ -266,6 +267,64 @@ class MLP(MLPClassifier):
         print("Predicting data with shape", X.shape)
         sys.stdout.flush()
         return super(MLP, self).predict(X)
+
+    def score(self, X, y):
+        return scorer(self, X, y)
+
+
+class XGB(XGBClassifier):
+    """docstring"""
+
+    def __init__(self,
+                 max_depth=3,
+                 learning_rate=0.1,
+                 n_estimators=100,
+                 silent=True,
+                 objective='binary:logistic',
+                 nthread=1,
+                 gamma=0,
+                 min_child_weight=1,
+                 max_delta_step=0,
+                 subsample=1,
+                 colsample_bytree=1,
+                 colsample_bylevel=1,
+                 reg_alpha=0,
+                 reg_lambda=1,
+                 scale_pos_weight=1,
+                 base_score=0.5,
+                 seed=0,
+                 missing=None,
+                 **kwargs):
+        super(XGB, self).__init__(
+            max_depth=max_depth,
+            learning_rate=learning_rate,
+            n_estimators=n_estimators,
+            silent=silent,
+            objective=objective,
+            nthread=nthread,
+            gamma=gamma,
+            min_child_weight=min_child_weight,
+            max_delta_step=max_delta_step,
+            subsample=subsample,
+            colsample_bytree=colsample_bytree,
+            colsample_bylevel=colsample_bylevel,
+            reg_alpha=reg_alpha,
+            reg_lambda=reg_lambda,
+            scale_pos_weight=scale_pos_weight,
+            base_score=base_score,
+            seed=seed,
+            missing=missing,
+            **kwargs)
+
+    def fit(self, X, y=None):
+        print("Fitting XGB on data with shape", X.shape)
+        sys.stdout.flush()
+        return super(XGB, self).fit(X, y)
+
+    def predict(self, X, y=None):
+        print("Predicting data with shape", X.shape)
+        sys.stdout.flush()
+        return super(XGB, self).predict(X)
 
     def score(self, X, y):
         return scorer(self, X, y)
