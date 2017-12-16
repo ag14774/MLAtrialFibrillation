@@ -276,11 +276,16 @@ def extract_data(biooutput, sampling_rate=300):
     mean_template_percentiles = np.percentile(mean_template,
                                               [5, 15, 25, 35, 65, 75, 85, 95])
 
+    heart_fft = fftanalysis(heart_rate, 300, 10)
+
+    rrintervals = RRIntervals(rpeaks)
+    rrinterval_stats = signal_stats(rrintervals)
+
     return (filtered_signal, median_template, mean_template, std_template,
             heartrate_percentiles, peaks_percentiles,
             median_template_percentiles, mean_template_percentiles,
             median_template_stats, mean_template_stats, heartrate_stats,
-            peak_stats)
+            peak_stats, heart_fft, rrinterval_stats)
 
 
 def featurevector(processed_signal, sampling_rate=300):
@@ -297,19 +302,23 @@ def featurevector(processed_signal, sampling_rate=300):
     mean_template_stats = list(results[9].as_dict().values())
     heartrate_stats = list(results[10].as_dict().values())
     peak_stats = list(results[11].as_dict().values())
+    heart_fft = results[12]
+    rr_interval_stats = list(results[13].as_dict().values())
 
     features = np.array([])
     features = np.append(features, median_template)
-    # features = np.append(features, mean_template)
+    features = np.append(features, mean_template)
     features = np.append(features, std_template)
     features = np.append(features, heartrate_percentiles)
     features = np.append(features, peaks_percentiles)
-    # features = np.append(features, median_template_percentiles)
-    # features = np.append(features, mean_template_percentiles)
+    features = np.append(features, median_template_percentiles)
+    features = np.append(features, mean_template_percentiles)
     features = np.append(features, median_template_stats)
     features = np.append(features, mean_template_stats)
     features = np.append(features, heartrate_stats)
     features = np.append(features, peak_stats)
+    features = np.append(features, heart_fft)
+    features = np.append(features, rr_interval_stats)
 
     return filtered_signal, features
 
@@ -513,10 +522,16 @@ def scorer(estimator, X, y):
     return fscore
 
 
-def fftanalysis(signal, rate=300):
-    fftsignal = np.fft.fft(signal)
-    freqs = np.fft.fftfreq(len(signal), d=1 / rate)
-    plt.bar(freqs, fftsignal)
-    plt.show()
-    idx = np.argmax(np.abs(fftsignal))
-    print("Most important frequency: ", freqs[idx])
+def fftanalysis(signal, rate=300, first=8):
+    try:
+        fftsignal = np.abs(np.fft.fft(signal))**2
+        if len(fftsignal < 8):
+            fftsignal = np.append(fftsignal, np.zeros(first - len(fftsignal)))
+    except Exception:
+        fftsignal = np.zeros(first)
+    # print(fftsignal)
+    # freqs = np.fft.fftfreq(len(signal), d=1 / rate)
+    # print(freqs)
+    # plt.bar(freqs[:first], fftsignal[:first])
+    # plt.show()
+    return fftsignal[:first]

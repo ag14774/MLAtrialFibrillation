@@ -8,9 +8,10 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.utils.validation import check_array, check_is_fitted
 from sklearn.neighbors import KNeighborsClassifier
-
+import matplotlib.pyplot as plt
 from ml_project.models.utils import scorer
-from xgboost import XGBClassifier
+from sklearn.feature_selection import RFE
+from xgboost import XGBClassifier, plot_importance
 
 
 class MeanPredictor(BaseEstimator, TransformerMixin):
@@ -320,7 +321,10 @@ class XGB(XGBClassifier):
     def fit(self, X, y=None):
         print("Fitting XGB on data with shape", X.shape)
         sys.stdout.flush()
-        return super(XGB, self).fit(X, y)
+        super(XGB, self).fit(X, y)
+        plot_importance(self)
+        plt.show()
+        return self
 
     def predict(self, X, y=None):
         print("Predicting data with shape", X.shape)
@@ -367,3 +371,90 @@ class KNN(KNeighborsClassifier):
 
     def score(self, X, y):
         return scorer(self, X, y)
+
+
+class RFEXGB(BaseEstimator, TransformerMixin):
+    """docstring"""
+
+    def __init__(self,
+                 n_features_to_select=None,
+                 step=1,
+                 verbose=0,
+                 max_depth=3,
+                 learning_rate=0.1,
+                 n_estimators=100,
+                 silent=True,
+                 objective='binary:logistic',
+                 nthread=1,
+                 gamma=0,
+                 min_child_weight=1,
+                 max_delta_step=0,
+                 subsample=1,
+                 colsample_bytree=1,
+                 colsample_bylevel=1,
+                 reg_alpha=0,
+                 reg_lambda=1,
+                 scale_pos_weight=1,
+                 base_score=0.5,
+                 seed=0,
+                 missing=None):
+        self.n_features_to_select = n_features_to_select
+        self.step = step
+        self.verbose = verbose
+        self.max_depth = max_depth
+        self.learning_rate = learning_rate
+        self.n_estimators = n_estimators
+        self.silent = silent
+        self.objective = objective
+        self.nthread = nthread
+        self.gamma = gamma
+        self.min_child_weight = min_child_weight
+        self.max_delta_step = max_delta_step
+        self.subsample = subsample
+        self.colsample_bytree = colsample_bytree
+        self.colsample_bylevel = colsample_bylevel
+        self.reg_alpha = reg_alpha
+        self.reg_lambda = reg_lambda
+        self.scale_pos_weight = scale_pos_weight
+        self.base_score = base_score
+        self.seed = seed
+        self.missing = missing
+        self.rfe = None
+
+    def fit(self, X, y=None):
+        print("Fitting RFE-XGB on data with shape", X.shape)
+        sys.stdout.flush()
+        base_estimator = XGB(
+            max_depth=self.max_depth,
+            learning_rate=self.learning_rate,
+            n_estimators=self.n_estimators,
+            silent=self.silent,
+            objective=self.objective,
+            nthread=self.nthread,
+            gamma=self.gamma,
+            min_child_weight=self.min_child_weight,
+            max_delta_step=self.max_delta_step,
+            subsample=self.subsample,
+            colsample_bytree=self.colsample_bytree,
+            colsample_bylevel=self.colsample_bylevel,
+            reg_alpha=self.reg_alpha,
+            reg_lambda=self.reg_lambda,
+            scale_pos_weight=self.scale_pos_weight,
+            base_score=self.base_score,
+            seed=self.seed,
+            missing=self.missing)
+        self.rfe = RFE(
+            base_estimator,
+            n_features_to_select=self.n_features_to_select,
+            step=self.step,
+            verbose=self.verbose)
+        self.rfe.fit(X, y)
+        return self
+
+    def predict(self, X, y=None):
+        print("Predicting data with shape", X.shape)
+        sys.stdout.flush()
+        return self.rfe.predict(X)
+
+    def score(self, X, y):
+        return scorer(self.rfe, X, y)
