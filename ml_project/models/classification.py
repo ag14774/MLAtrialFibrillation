@@ -322,8 +322,8 @@ class XGB(XGBClassifier):
         print("Fitting XGB on data with shape", X.shape)
         sys.stdout.flush()
         super(XGB, self).fit(X, y)
-        plot_importance(self)
-        plt.show()
+        # plot_importance(self)
+        # plt.show()
         return self
 
     def predict(self, X, y=None):
@@ -423,6 +423,7 @@ class RFEXGB(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         print("Fitting RFE-XGB on data with shape", X.shape)
+        print("Target number of features:", self.n_features_to_select)
         sys.stdout.flush()
         base_estimator = XGB(
             max_depth=self.max_depth,
