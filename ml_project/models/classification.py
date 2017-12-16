@@ -7,6 +7,7 @@ from sklearn.ensemble import (AdaBoostClassifier, GradientBoostingClassifier,
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.utils.validation import check_array, check_is_fitted
+from sklearn.neighbors import KNeighborsClassifier
 
 from ml_project.models.utils import scorer
 from xgboost import XGBClassifier
@@ -325,6 +326,44 @@ class XGB(XGBClassifier):
         print("Predicting data with shape", X.shape)
         sys.stdout.flush()
         return super(XGB, self).predict(X)
+
+    def score(self, X, y):
+        return scorer(self, X, y)
+
+
+class KNN(KNeighborsClassifier):
+    """docstring"""
+
+    def __init__(self,
+                 n_neighbors=5,
+                 weights='uniform',
+                 algorithm='auto',
+                 leaf_size=30,
+                 p=2,
+                 metric='minkowski',
+                 metric_params=None,
+                 n_jobs=1,
+                 **kwargs):
+        super(KNN, self).__init__(
+            n_neighbors=n_neighbors,
+            weights=weights,
+            algorithm=algorithm,
+            leaf_size=leaf_size,
+            p=p,
+            metric=metric,
+            metric_params=metric_params,
+            n_jobs=n_jobs,
+            **kwargs)
+
+    def fit(self, X, y=None):
+        print("Fitting KNN on data with shape", X.shape)
+        sys.stdout.flush()
+        return super(KNN, self).fit(X, y)
+
+    def predict(self, X, y=None):
+        print("Predicting data with shape", X.shape)
+        sys.stdout.flush()
+        return super(KNN, self).predict(X)
 
     def score(self, X, y):
         return scorer(self, X, y)
