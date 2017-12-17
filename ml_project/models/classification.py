@@ -4,14 +4,14 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.ensemble import (AdaBoostClassifier, GradientBoostingClassifier,
                               RandomForestClassifier)
+from sklearn.feature_selection import RFE
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.utils.validation import check_array, check_is_fitted
-from sklearn.neighbors import KNeighborsClassifier
-import matplotlib.pyplot as plt
+
 from ml_project.models.utils import scorer
-from sklearn.feature_selection import RFE
-from xgboost import XGBClassifier, plot_importance
+from xgboost import XGBClassifier
 
 
 class MeanPredictor(BaseEstimator, TransformerMixin):

@@ -8,7 +8,7 @@ from sklearn.preprocessing import scale
 from sklearn.utils.validation import check_is_fitted
 
 import pywt
-from ml_project.models.utils import bandpass_filter, check_X_tuple, fixBaseline
+from ml_project.models.utils import check_X_tuple, fixBaseline
 
 
 class Hstack(BaseEstimator, TransformerMixin):
@@ -164,38 +164,6 @@ class BaseLineWanderFix(BaseEstimator, TransformerMixin):
                 sys.stdout.flush()
         print("Baseline fixed...")
         sys.stdout.flush()
-        return (X1, X2)
-
-
-class BandpassFilter(BaseEstimator, TransformerMixin):
-    """docstring"""
-
-    def __init__(self,
-                 skip=False,
-                 lowcut=0.0,
-                 highcut=15.0,
-                 sampling_rate=300,
-                 filter_order=1):
-        self.skip = skip
-        self.lowcut = lowcut
-        self.highcut = highcut
-        self.sampling_rate = sampling_rate
-        self.filter_order = filter_order
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X, y=None):
-        X1, X2 = check_X_tuple(X)
-        if self.skip is True:
-            return X
-        for i in range(X1.shape[0]):
-            X1[i] = bandpass_filter(
-                X1[i],
-                lowcut=self.lowcut,
-                highcut=self.highcut,
-                signal_freq=self.sampling_rate,
-                filter_order=self.filter_order)
         return (X1, X2)
 
 
