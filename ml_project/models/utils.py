@@ -8,7 +8,7 @@ from scipy.signal import argrelmax, butter, lfilter
 from scipy.stats import stats
 from sklearn.metrics import f1_score
 from sklearn.utils.random import sample_without_replacement
-
+from pydtw import dtw1d
 from biosppy import plotting, utils
 from biosppy.signals import tools as st
 from biosppy.signals.ecg import (correct_rpeaks, extract_heartbeats,
@@ -239,7 +239,12 @@ def ecg2(signal=None,
     return utils.ReturnTuple(args, names)
 
 
-def extract_data(biooutput, sampling_rate=300):
+def extract_data(biooutput,
+                 template0,
+                 template1,
+                 template2,
+                 template3,
+                 sampling_rate=300):
     original_signal = biooutput["original"]
     filtered_signal = biooutput["filtered"]
     median_template = np.median(biooutput["templates"], axis=0)
@@ -276,9 +281,17 @@ def extract_data(biooutput, sampling_rate=300):
     rrintervals = RRIntervals(rpeaks)
     rrinterval_stats = signal_stats(rrintervals)
 
+    cost0, _, _ = dtw1d(mean_template, template0)
+    cost1, _, _ = dtw1d(mean_template, template1)
+    cost2, _, _ = dtw1d(mean_template, template2)
+    cost3, _, _ = dtw1d(mean_template, template3)
+    temp = [cost0[-1, -1], cost1[-1, -1], cost2[-1, -1], cost3[-1, -1]]
+    temp.append(np.argmin(temp))
+    template_distances = np.array(temp)
+
     return (filtered_signal, median_template, mean_template, std_template,
             median_template_stats, mean_template_stats, heartrate_stats,
-            peak_stats, heart_fft, rrinterval_stats)
+            peak_stats, heart_fft, rrinterval_stats, template_distances)
 
 
 @jit
@@ -292,8 +305,19 @@ def flatten(lis):
     return new_lis
 
 
-def featurevector(processed_signal, sampling_rate=300):
-    results = extract_data(processed_signal, sampling_rate=sampling_rate)
+def featurevector(processed_signal,
+                  template0,
+                  template1,
+                  template2,
+                  template3,
+                  sampling_rate=300):
+    results = extract_data(
+        processed_signal,
+        template0,
+        template1,
+        template2,
+        template3,
+        sampling_rate=sampling_rate)
     filtered_signal = results[0]
     median_template = results[1]
     mean_template = results[2]
@@ -304,6 +328,7 @@ def featurevector(processed_signal, sampling_rate=300):
     peak_stats = flatten(list(results[7].as_dict().values()))
     heart_fft = results[8]
     rr_interval_stats = flatten(list(results[9].as_dict().values()))
+    template_distances = results[10]
 
     features = np.array([])
     features = np.append(features, median_template)
@@ -315,6 +340,7 @@ def featurevector(processed_signal, sampling_rate=300):
     features = np.append(features, peak_stats)
     features = np.append(features, heart_fft)
     features = np.append(features, rr_interval_stats)
+    features = np.append(features, template_distances)
 
     return filtered_signal, features
 
@@ -531,3 +557,19 @@ def fftanalysis(signal, rate=300, first=8):
     # plt.bar(freqs[:first], fftsignal[:first])
     # plt.show()
     return fftsignal[:first]
+
+
+def meanTemplatePerClass(X, y):
+    X = biosspyX(X, sampling_rate=300, show=False, verbose=True)
+    XMedianTemplates = np.zeros((len(X), 180))
+    for i, x in enumerate(X):
+        XMedianTemplates[i] = np.mean(X[i]["templates"], axis=0)
+    X0 = XMedianTemplates[y == 0]
+    X1 = XMedianTemplates[y == 1]
+    X2 = XMedianTemplates[y == 2]
+    X3 = XMedianTemplates[y == 3]
+    return np.mean(
+        X0, axis=0), np.mean(
+            X1, axis=0), np.mean(
+                X2, axis=0), np.mean(
+                    X3, axis=0)
