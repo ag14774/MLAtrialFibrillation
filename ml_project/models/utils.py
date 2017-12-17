@@ -6,8 +6,8 @@ import scipy
 from scipy.ndimage.filters import gaussian_filter
 from scipy.signal import argrelmax, butter, lfilter
 from scipy.stats import stats
-from sklearn.utils.random import sample_without_replacement
 from sklearn.metrics import f1_score
+from sklearn.utils.random import sample_without_replacement
 
 from biosppy import plotting, utils
 from biosppy.signals import tools as st
@@ -98,17 +98,20 @@ def signal_stats(signal):
         # skweness
         skew = stats.skew(signal, bias=False)
 
+        percentiles = np.ndarray.tolist(
+            np.percentile(signal, [5, 15, 25, 35, 65, 75, 85, 95]))
+
         # output
         args = (mean, median, maxAmpAbs, minAmpAbs, maxAmp, minAmp, sigma2,
-                sigma, ad, kurt, skew)
+                sigma, ad, kurt, skew, percentiles)
         names = ('mean', 'median', 'maxabs', 'minabs', 'max', 'min', 'var',
-                 'std_dev', 'abs_dev', 'kurtosis', 'skewness')
+                 'std_dev', 'abs_dev', 'kurtosis', 'skewness', 'percentiles')
 
         return utils.ReturnTuple(args, names)
     except Exception:
-        args = (0, 0, 0, 0, 0, 0, 0, 0)
-        names = ('mean', 'median', 'max', 'var', 'std_dev', 'abs_dev',
-                 'kurtosis', 'skewness')
+        args = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, [0, 0, 0, 0, 0, 0, 0, 0])
+        names = ('mean', 'median', 'maxabs', 'minabs', 'max', 'min', 'var',
+                 'std_dev', 'abs_dev', 'kurtosis', 'skewness', 'percentiles')
 
         return utils.ReturnTuple(args, names)
 
@@ -268,24 +271,25 @@ def extract_data(biooutput, sampling_rate=300):
     peak_values = original_signal[rpeaks]
     peak_stats = signal_stats(peak_values)
 
-    heartrate_percentiles = np.percentile(heart_rate,
-                                          [5, 15, 25, 35, 65, 75, 85, 95])
-    peaks_percentiles = np.percentile(rpeaks, [5, 15, 25, 35, 65, 75, 85, 95])
-    median_template_percentiles = np.percentile(
-        median_template, [5, 15, 25, 35, 65, 75, 85, 95])
-    mean_template_percentiles = np.percentile(mean_template,
-                                              [5, 15, 25, 35, 65, 75, 85, 95])
-
     heart_fft = fftanalysis(heart_rate, 300, 10)
 
     rrintervals = RRIntervals(rpeaks)
     rrinterval_stats = signal_stats(rrintervals)
 
     return (filtered_signal, median_template, mean_template, std_template,
-            heartrate_percentiles, peaks_percentiles,
-            median_template_percentiles, mean_template_percentiles,
             median_template_stats, mean_template_stats, heartrate_stats,
             peak_stats, heart_fft, rrinterval_stats)
+
+
+@jit
+def flatten(lis):
+    new_lis = []
+    for item in lis:
+        if isinstance(item, list):
+            new_lis.extend(item)
+        else:
+            new_lis.append(item)
+    return new_lis
 
 
 def featurevector(processed_signal, sampling_rate=300):
@@ -294,25 +298,17 @@ def featurevector(processed_signal, sampling_rate=300):
     median_template = results[1]
     mean_template = results[2]
     std_template = results[3]
-    heartrate_percentiles = results[4]
-    peaks_percentiles = results[5]
-    median_template_percentiles = results[6]
-    mean_template_percentiles = results[7]
-    median_template_stats = list(results[8].as_dict().values())
-    mean_template_stats = list(results[9].as_dict().values())
-    heartrate_stats = list(results[10].as_dict().values())
-    peak_stats = list(results[11].as_dict().values())
-    heart_fft = results[12]
-    rr_interval_stats = list(results[13].as_dict().values())
+    median_template_stats = flatten(list(results[4].as_dict().values()))
+    mean_template_stats = flatten(list(results[5].as_dict().values()))
+    heartrate_stats = flatten(list(results[6].as_dict().values()))
+    peak_stats = flatten(list(results[7].as_dict().values()))
+    heart_fft = results[8]
+    rr_interval_stats = flatten(list(results[9].as_dict().values()))
 
     features = np.array([])
     features = np.append(features, median_template)
     features = np.append(features, mean_template)
     features = np.append(features, std_template)
-    features = np.append(features, heartrate_percentiles)
-    features = np.append(features, peaks_percentiles)
-    features = np.append(features, median_template_percentiles)
-    features = np.append(features, mean_template_percentiles)
     features = np.append(features, median_template_stats)
     features = np.append(features, mean_template_stats)
     features = np.append(features, heartrate_stats)
