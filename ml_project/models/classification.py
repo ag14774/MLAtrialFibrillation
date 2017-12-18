@@ -329,7 +329,7 @@ class XGB(XGBClassifier):
     def predict(self, X, y=None):
         print("Predicting data with shape", X.shape)
         sys.stdout.flush()
-        return super(XGB, self).predict(X)
+        return super(XGB, self).predict(X).astype(int)
 
     def score(self, X, y):
         return scorer(self, X, y)
@@ -455,7 +455,7 @@ class RFEXGB(BaseEstimator, TransformerMixin):
     def predict(self, X, y=None):
         print("Predicting data with shape", X.shape)
         sys.stdout.flush()
-        return self.rfe.predict(X)
+        return self.rfe.predict(X).astype(int)
 
     def score(self, X, y):
         return scorer(self.rfe, X, y)

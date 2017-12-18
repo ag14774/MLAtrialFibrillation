@@ -162,8 +162,7 @@ class ModelAction(Action):
         if self._X_new_set:
             np.save(X_path, self.X_new)
         if self._y_new_set and self.args.action == "predict":
-            # df = pd.DataFrame({"Prediction": self.y_new})
-            df = pd.DataFrame({"Prediction": self.y_new}, dtype=np.int8)
+            df = pd.DataFrame({"Prediction": self.y_new})
             df.index += 1
             df.index.name = "ID"
             df.to_csv(y_path)
