@@ -300,10 +300,13 @@ def extract_data(biooutput, sampling_rate=300):
     prr20 = rr20 / len(rrinterval2)
     hrv_data = np.array([rr50, rr20, prr50, prr20])
 
+    numofpeaks = len(biooutput["rpeaks"])
+
     return (filtered_signal, median_template, mean_template, std_template,
             median_template_stats, mean_template_stats, heartrate_stats,
             peak_stats, rrinterval_stats, median_temp_perc, mean_temp_perc,
-            heart_rate_perc, peak_perc, rrinterval2_stats, hrv_data)
+            heart_rate_perc, peak_perc, rrinterval2_stats, hrv_data,
+            numofpeaks)
 
 
 @jit
@@ -323,17 +326,18 @@ def featurevector(processed_signal, sampling_rate=300):
     median_template = results[1]
     mean_template = results[2]
     std_template = results[3]
-    median_template_stats = flatten(list(results[4].as_dict().values()))
-    mean_template_stats = flatten(list(results[5].as_dict().values()))
-    heartrate_stats = flatten(list(results[6].as_dict().values()))
-    peak_stats = flatten(list(results[7].as_dict().values()))
-    rr_interval_stats = flatten(list(results[8].as_dict().values()))
+    median_template_stats = list(results[4].as_dict().values())
+    mean_template_stats = list(results[5].as_dict().values())
+    heartrate_stats = list(results[6].as_dict().values())
+    peak_stats = list(results[7].as_dict().values())
+    rr_interval_stats = list(results[8].as_dict().values())
     median_temp_perc = results[9]
     mean_temp_perc = results[10]
     heart_rate_perc = results[11]
     peak_perc = results[12]
-    rrinterval2_stats = results[13]
+    rrinterval2_stats = list(results[13].as_dict().values())
     hrv_data = results[14]
+    numofpeaks = results[15]
 
     features = np.array([])
     features = np.append(features, median_template)
@@ -350,6 +354,7 @@ def featurevector(processed_signal, sampling_rate=300):
     features = np.append(features, peak_perc)
     features = np.append(features, rrinterval2_stats)
     features = np.append(features, hrv_data)
+    features = np.append(features, numofpeaks)
 
     return filtered_signal, features
 
